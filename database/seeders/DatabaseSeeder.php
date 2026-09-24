@@ -15,11 +15,19 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        User::query()->updateOrCreate(
+            ['email' => config('velo.admin.email')],
+            [
+                'name' => config('velo.admin.name'),
+                'password' => config('velo.admin.password'),
+                'role' => 'admin',
+                'is_active' => true,
+            ],
+        );
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+        $this->call([
+            SiteSettingSeeder::class,
+            CatalogSeeder::class,
         ]);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+use App\Models\Category;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
 
 return [
@@ -131,6 +133,9 @@ return [
     |
     */
 
-    'serializable_classes' => false,
+    'serializable_classes' => [
+        Category::class,
+        Collection::class,
+    ],
 
 ];
