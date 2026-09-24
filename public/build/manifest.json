@@ -1,0 +1,61 @@
+{
+  "_fonts-Z93A_ASK.css": {
+    "file": "assets/fonts-Z93A_ASK.css",
+    "src": "_fonts-Z93A_ASK.css"
+  },
+  "_montserrat-400-normal-BLhwKU8k.woff2": {
+    "file": "assets/montserrat-400-normal-BLhwKU8k.woff2",
+    "src": "_montserrat-400-normal-BLhwKU8k.woff2"
+  },
+  "_montserrat-400-normal-xItZbAXg.woff": {
+    "file": "assets/montserrat-400-normal-xItZbAXg.woff",
+    "src": "_montserrat-400-normal-xItZbAXg.woff"
+  },
+  "_montserrat-500-normal-DRFEGfly.woff2": {
+    "file": "assets/montserrat-500-normal-DRFEGfly.woff2",
+    "src": "_montserrat-500-normal-DRFEGfly.woff2"
+  },
+  "_montserrat-500-normal-Dok2oTci.woff": {
+    "file": "assets/montserrat-500-normal-Dok2oTci.woff",
+    "src": "_montserrat-500-normal-Dok2oTci.woff"
+  },
+  "_montserrat-600-normal-CdhFl4lI.woff": {
+    "file": "assets/montserrat-600-normal-CdhFl4lI.woff",
+    "src": "_montserrat-600-normal-CdhFl4lI.woff"
+  },
+  "_montserrat-600-normal-UVxSCcoG.woff2": {
+    "file": "assets/montserrat-600-normal-UVxSCcoG.woff2",
+    "src": "_montserrat-600-normal-UVxSCcoG.woff2"
+  },
+  "_montserrat-700-normal-BWkrl476.woff": {
+    "file": "assets/montserrat-700-normal-BWkrl476.woff",
+    "src": "_montserrat-700-normal-BWkrl476.woff"
+  },
+  "_montserrat-700-normal-BdjcYUrC.woff2": {
+    "file": "assets/montserrat-700-normal-BdjcYUrC.woff2",
+    "src": "_montserrat-700-normal-BdjcYUrC.woff2"
+  },
+  "_montserrat-800-normal-C3dfDxXV.woff": {
+    "file": "assets/montserrat-800-normal-C3dfDxXV.woff",
+    "src": "_montserrat-800-normal-C3dfDxXV.woff"
+  },
+  "_montserrat-800-normal-axpkC1rd.woff2": {
+    "file": "assets/montserrat-800-normal-axpkC1rd.woff2",
+    "src": "_montserrat-800-normal-axpkC1rd.woff2"
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-BkrDsyuU.css",
+    "name": "app",
+    "names": [
+      "app.css"
+    ],
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-iS0JY3jK.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true
+  }
+}
