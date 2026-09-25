@@ -60,6 +60,26 @@ test('saves the settings and the website uses them', function () {
         ->assertSee('Bulk orders with your logo.');
 });
 
+test('saves the home page promotion wording', function () {
+    $this->actingAs(User::factory()->create())
+        ->put(route('admin.settings.update'), settingsPayload([
+            'promo_title' => 'Festive gifting, sorted',
+            'promo_text' => 'Hampers for every team.',
+        ]));
+
+    expect(SiteSetting::value('promo_title'))->toBe('Festive gifting, sorted')
+        ->and(SiteSetting::value('promo_text'))->toBe('Hampers for every team.');
+
+    $this->get('/')->assertSee('Festive gifting, sorted')->assertSee('Hampers for every team.');
+});
+
+test('a blank promotion heading falls back to the default wording', function () {
+    $this->actingAs(User::factory()->create())
+        ->put(route('admin.settings.update'), settingsPayload(['promo_title' => '']));
+
+    $this->get('/')->assertSee('Corporate gifting, handled end to end');
+});
+
 test('turning prices off shows price on request on the website', function () {
     Product::factory()->featured()->create(['price' => 1250]);
 

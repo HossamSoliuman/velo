@@ -104,10 +104,49 @@ class Category extends Model
         });
     }
 
+    /**
+     * Whether visitors can open the category: it is active, and so is its parent category if it has one.
+     */
+    public function isVisible(): bool
+    {
+        return $this->is_active && ($this->parent_id === null || $this->parent?->is_active === true);
+    }
+
+    /**
+     * IDs of this category and its active sub-categories, whose products are listed together.
+     *
+     * @return list<int>
+     */
+    public function listingCategoryIds(): array
+    {
+        return [$this->id, ...$this->children()->active()->pluck('id')->all()];
+    }
+
+    /**
+     * The description as plain text, for excerpts and meta descriptions.
+     *
+     * @return Attribute<string, never>
+     */
+    protected function plainDescription(): Attribute
+    {
+        return Attribute::get(fn (): string => SanitizedHtml::plainText($this->description));
+    }
+
     #[Scope]
     protected function active(Builder $query): void
     {
         $query->where('is_active', true);
+    }
+
+    /**
+     * Active categories whose parent, if any, is active too.
+     */
+    #[Scope]
+    protected function visible(Builder $query): void
+    {
+        $query->active()->where(fn (Builder $query) => $query
+            ->whereNull('parent_id')
+            ->orWhereHas('parent', fn (Builder $query) => $query->active()));
     }
 
     #[Scope]

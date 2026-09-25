@@ -18,6 +18,8 @@ class SiteSettingSeeder extends Seeder
             'hero_title' => 'Gifts that carry your brand',
             'hero_highlight' => 'further.',
             'hero_subtitle' => 'Customised gift sets, diaries, bags, pens, electronics and printing — branded with your logo and delivered in bulk.',
+            'promo_title' => 'Corporate gifting, handled end to end',
+            'promo_text' => 'From welcome kits for new joiners to festive hampers for clients, we source, brand and pack gifts that fit your budget and timeline.',
             'phone' => '+91 00000 00000',
             'whatsapp' => '+91 00000 00000',
             'email' => 'info@velo.example',

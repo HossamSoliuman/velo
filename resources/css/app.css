@@ -45,6 +45,56 @@
     }
 }
 
+/*
+ * Admin-edited rich text (product and category descriptions, content pages).
+ * Preflight resets headings and lists, so their reading styles are restored here.
+ */
+@layer components {
+    .rich-text {
+        @apply leading-relaxed text-slate-700;
+    }
+
+    .rich-text > * + * {
+        @apply mt-4;
+    }
+
+    .rich-text :is(h1, h2) {
+        @apply mt-8 text-xl font-extrabold text-brand-800;
+    }
+
+    .rich-text :is(h3, h4) {
+        @apply mt-6 text-lg font-bold text-brand-800;
+    }
+
+    .rich-text :is(ul, ol) {
+        @apply space-y-1.5 pl-6;
+    }
+
+    .rich-text ul {
+        @apply list-disc marker:text-brand-400;
+    }
+
+    .rich-text ol {
+        @apply list-decimal marker:font-semibold marker:text-brand-500;
+    }
+
+    .rich-text a {
+        @apply font-semibold text-brand-600 underline decoration-brand-200 underline-offset-2 hover:text-brand-800;
+    }
+
+    .rich-text blockquote {
+        @apply border-l-4 border-fan-magenta/60 pl-4 text-slate-600 italic;
+    }
+
+    .rich-text pre {
+        @apply overflow-x-auto rounded-lg bg-brand-50 px-4 py-3 font-mono text-sm whitespace-pre-wrap;
+    }
+
+    .rich-text :is(strong, b) {
+        @apply font-bold text-ink;
+    }
+}
+
 @utility bg-fan-gradient {
     background-image: linear-gradient(
         90deg,

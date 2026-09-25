@@ -38,5 +38,5 @@ test('product and category slug histories are kept apart', function () {
     $category = Category::factory()->create(['slug' => 'pens']);
     $category->update(['slug' => 'writing']);
 
-    $this->get('/product/pens')->assertOk();
+    $this->get('/product/pens')->assertNotFound();
 });

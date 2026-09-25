@@ -1,10 +1,16 @@
 @php
+    use App\Models\Category;
     use App\Models\SiteSetting;
 
     $phone = SiteSetting::value('phone');
     $email = SiteSetting::value('email');
+    $searchQuery = is_string(request()->query('q')) ? request()->query('q') : '';
     $inlineCategories = $navigationCategories->take((int) SiteSetting::value('nav_category_limit', 7));
-    $navLink = 'block whitespace-nowrap px-2.5 py-3.5 text-[0.8rem] font-semibold text-white/90 transition hover:bg-brand-600 hover:text-white';
+    $navLink = 'block whitespace-nowrap px-2.5 py-3.5 text-[0.8rem] font-semibold text-white/90 transition hover:bg-brand-600 hover:text-white aria-[current=page]:bg-brand-700 aria-[current=page]:text-white';
+
+    // The top-level category being browsed, so its menu link can be marked as current.
+    $routeCategory = request()->route('category');
+    $currentTopLevelId = $routeCategory instanceof Category ? ($routeCategory->parent_id ?? $routeCategory->id) : null;
 @endphp
 
 <header x-data="{ drawer: false }" @keydown.escape.window="drawer = false" class="relative z-40">
@@ -43,7 +49,7 @@
             <form action="{{ route('search') }}" method="GET" role="search" class="ml-auto hidden max-w-xl flex-1 md:block">
                 <label for="header-search" class="sr-only">Search products by name or SKU</label>
                 <div class="flex overflow-hidden rounded-full border-2 border-brand-100 bg-brand-50/60 focus-within:border-brand-400">
-                    <input id="header-search" type="search" name="q" value="{{ request('q') }}" placeholder="Search products or SKU…"
+                    <input id="header-search" type="search" name="q" value="{{ $searchQuery }}" placeholder="Search products or SKU…"
                         class="w-full bg-transparent px-5 py-2.5 text-sm placeholder:text-slate-400 focus:outline-none">
                     <button type="submit" class="bg-brand-500 px-5 text-white transition hover:bg-brand-600" aria-label="Search">
                         <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" d="m21 21-4.35-4.35M17 10.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z"/></svg>
@@ -62,11 +68,13 @@
         <ul class="mx-auto flex max-w-7xl items-stretch px-4 sm:px-6 lg:px-8">
             <li><a href="{{ route('home') }}" class="{{ $navLink }}" @if (request()->routeIs('home')) aria-current="page" @endif>Home</a></li>
 
-            <li x-data="{ open: false, timer: null }"
-                @mouseenter="clearTimeout(timer); open = true"
+            {{-- A click straight after the hover that opened a menu (or a tap, which fires both) keeps it open. --}}
+            <li x-data="{ open: false, timer: null, openedAt: 0 }"
+                @mouseenter="clearTimeout(timer); if (! open) { open = true; openedAt = Date.now() }"
                 @mouseleave="timer = setTimeout(() => open = false, 150)"
+                @click.outside="open = false"
                 @keydown.escape="open = false">
-                <button type="button" @click="open = !open" :aria-expanded="open" aria-controls="mega-menu"
+                <button type="button" @click="open = Date.now() - openedAt < 500 || ! open" :aria-expanded="open" aria-controls="mega-menu"
                     class="{{ $navLink }} flex items-center gap-1" :class="open && 'bg-brand-600 text-white'">
                     <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h10"/></svg>
                     All Categories
@@ -77,7 +85,6 @@
                 <div id="mega-menu" x-show="open" x-cloak
                     x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 -translate-y-1"
                     x-transition:leave="transition ease-in duration-100" x-transition:leave-end="opacity-0"
-                    @click.outside="open = false"
                     class="absolute inset-x-0 top-full border-t-4 border-fan-magenta bg-white shadow-2xl">
                     <div class="mx-auto grid max-h-[70vh] max-w-7xl grid-cols-4 gap-x-8 gap-y-6 overflow-y-auto px-8 py-8 xl:grid-cols-5">
                         @forelse ($navigationCategories as $category)
@@ -110,12 +117,12 @@
 
             @foreach ($inlineCategories as $category)
                 <li @class(['hidden', 'xl:block' => $loop->index < 4, '2xl:block' => $loop->index >= 4])>
-                    <a href="{{ route('categories.show', $category->slug) }}" class="{{ $navLink }}">{{ $category->name }}</a>
+                    <a href="{{ route('categories.show', $category->slug) }}" class="{{ $navLink }}" @if ($category->id === $currentTopLevelId) aria-current="page" @endif>{{ $category->name }}</a>
                 </li>
             @endforeach
 
-            <li class="relative" x-data="{ open: false }" @mouseenter="open = true" @mouseleave="open = false" @keydown.escape="open = false">
-                <button type="button" @click="open = !open" :aria-expanded="open" class="{{ $navLink }} flex items-center gap-1">
+            <li class="relative" x-data="{ open: false, openedAt: 0 }" @mouseenter="if (! open) { open = true; openedAt = Date.now() }" @mouseleave="open = false" @keydown.escape="open = false">
+                <button type="button" @click="open = Date.now() - openedAt < 500 || ! open" :aria-expanded="open" class="{{ $navLink }} flex items-center gap-1">
                     Price Range
                     <svg class="size-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
                 </button>
@@ -129,9 +136,9 @@
                 </ul>
             </li>
 
-            <li class="ml-auto"><a href="{{ route('about') }}" class="{{ $navLink }}">About Us</a></li>
-            <li><a href="{{ route('e-catalog') }}" class="{{ $navLink }}">E-Catalog</a></li>
-            <li><a href="{{ route('contact') }}" class="{{ $navLink }}">Contact Us</a></li>
+            <li class="ml-auto"><a href="{{ route('about') }}" class="{{ $navLink }}" @if (request()->routeIs('about')) aria-current="page" @endif>About Us</a></li>
+            <li><a href="{{ route('e-catalog') }}" class="{{ $navLink }}" @if (request()->routeIs('e-catalog')) aria-current="page" @endif>E-Catalog</a></li>
+            <li><a href="{{ route('contact') }}" class="{{ $navLink }}" @if (request()->routeIs('contact')) aria-current="page" @endif>Contact Us</a></li>
         </ul>
     </nav>
     <div class="h-1 bg-fan-gradient"></div>
@@ -154,7 +161,7 @@
 
             <form action="{{ route('search') }}" method="GET" role="search" class="p-4">
                 <label for="drawer-search" class="sr-only">Search products by name or SKU</label>
-                <input id="drawer-search" type="search" name="q" placeholder="Search products or SKU…"
+                <input id="drawer-search" type="search" name="q" value="{{ $searchQuery }}" placeholder="Search products or SKU…"
                     class="w-full rounded-full border-2 border-brand-100 bg-brand-50/60 px-4 py-2.5 text-sm focus:border-brand-400 focus:outline-none">
             </form>
 
