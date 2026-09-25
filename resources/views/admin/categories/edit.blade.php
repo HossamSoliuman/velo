@@ -1,12 +1,25 @@
-<x-layouts.admin title="Edit category">
+<x-layouts.admin :title="$category->parent ? 'Edit sub-category' : 'Edit category'">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
-        <a href="{{ route('admin.categories.index') }}" class="text-sm font-semibold text-brand-600 hover:text-brand-800">← All categories</a>
+        <x-admin.breadcrumbs :items="$category->parent
+            ? [
+                ['Categories', route('admin.categories.index')],
+                [$category->parent->name, route('admin.categories.show', $category->parent)],
+                [$category->name, null],
+            ]
+            : [
+                ['Categories', route('admin.categories.index')],
+                [$category->name, route('admin.categories.show', $category)],
+                ['Edit', null],
+            ]" />
         @if ($category->is_active)
             <a href="{{ route('categories.show', $category->slug) }}" target="_blank" class="text-sm font-semibold text-brand-600 hover:text-brand-800">View on website ↗</a>
         @endif
     </div>
 
-    @include('admin.categories.form', ['action' => route('admin.categories.update', $category)])
+    @include('admin.categories.form', [
+        'action' => route('admin.categories.update', $category),
+        'cancelUrl' => route('admin.categories.show', $category->parent ?? $category),
+    ])
 
     @php
         $parentNames = $reassignOptions->pluck('name', 'id');

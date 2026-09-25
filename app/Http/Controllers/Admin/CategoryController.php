@@ -17,22 +17,57 @@ class CategoryController extends Controller
 {
     use ManagesUploads;
 
-    public function index(): View
+    /**
+     * Level one: the top-level categories, or every category matching a search.
+     */
+    public function index(Request $request): View
     {
+        $search = trim((string) $request->query('search'));
+
         return view('admin.categories.index', [
-            'categories' => Category::query()
-                ->whereNull('parent_id')
-                ->ordered()
-                ->withCount('products')
-                ->with(['children' => fn ($query) => $query->ordered()->withCount('products')])
-                ->get(),
+            'search' => $search,
+            'categories' => $search === ''
+                ? Category::query()
+                    ->whereNull('parent_id')
+                    ->ordered()
+                    ->withCount(['products', 'children'])
+                    ->with(['children' => fn ($query) => $query->ordered()->select(['id', 'parent_id', 'name', 'is_active'])])
+                    ->get()
+                : Category::query()
+                    ->where(fn ($query) => $query->whereLike('name', "%{$search}%")->orWhereLike('slug', "%{$search}%"))
+                    ->with('parent:id,name,slug')
+                    ->withCount(['products', 'children'])
+                    ->orderBy('name')
+                    ->get(),
         ]);
     }
 
-    public function create(): View
+    /**
+     * Level two: a top-level category with its sub-categories.
+     */
+    public function show(Category $category): View|RedirectResponse
     {
+        if ($category->parent_id !== null) {
+            return redirect()->route('admin.categories.edit', $category);
+        }
+
+        $category->loadCount(['products', 'children'])
+            ->load(['children' => fn ($query) => $query->ordered()->withCount('products')]);
+
+        return view('admin.categories.show', [
+            'category' => $category,
+        ]);
+    }
+
+    public function create(Request $request): View
+    {
+        $parent = $request->filled('parent')
+            ? Category::query()->whereNull('parent_id')->find($request->integer('parent'))
+            : null;
+
         return view('admin.categories.create', [
-            'category' => new Category(['is_active' => true, 'show_in_menu' => true, 'display_order' => 0]),
+            'category' => new Category(['is_active' => true, 'show_in_menu' => true, 'display_order' => 0, 'parent_id' => $parent?->id]),
+            'parent' => $parent,
             'parentOptions' => $this->parentOptions(),
         ]);
     }
@@ -46,14 +81,14 @@ class CategoryController extends Controller
             'og_image' => $this->uploadedPath($request, 'og_image', null, 'seo'),
         ]);
 
-        return redirect()->route('admin.categories.index')
-            ->with('status', "Category “{$category->name}” created.")
+        return redirect($this->listingUrl($category))
+            ->with('status', ($category->parent_id ? 'Sub-category' : 'Category')." “{$category->name}” created.")
             ->with('warnings', $category->seoWarnings());
     }
 
     public function edit(Category $category): View
     {
-        $category->loadCount(['products', 'children']);
+        $category->loadCount(['products', 'children'])->load('parent:id,name,slug');
 
         return view('admin.categories.edit', [
             'category' => $category,
@@ -117,7 +152,19 @@ class CategoryController extends Controller
             $message .= sprintf(' %d %s moved to “%s”.', $productIds->count(), str('product')->plural($productIds->count()), $target->name);
         }
 
-        return redirect()->route('admin.categories.index')->with('status', $message);
+        return redirect($this->listingUrl($category))->with('status', $message);
+    }
+
+    /**
+     * The admin page that lists the given category: its parent's page for a sub-category, otherwise the top-level list.
+     */
+    private function listingUrl(Category $category): string
+    {
+        $parent = $category->parent_id ? Category::query()->find($category->parent_id) : null;
+
+        return $parent
+            ? route('admin.categories.show', $parent)
+            : route('admin.categories.index');
     }
 
     /**

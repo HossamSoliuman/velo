@@ -44,7 +44,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     Route::patch('category-order', [CategoryOrderController::class, 'update'])->name('category-order.update');
     Route::patch('categories/{category}/status', [CategoryStatusController::class, 'update'])->name('categories.status.update');
-    Route::resource('categories', CategoryController::class)->except('show');
+    Route::resource('categories', CategoryController::class);
 
     Route::patch('product-order', [ProductOrderController::class, 'update'])->name('product-order.update');
     Route::patch('products/{product}/status', [ProductStatusController::class, 'update'])->name('products.status.update');

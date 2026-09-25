@@ -57,5 +57,9 @@
         </x-admin.card>
     </div>
 
-    @include('admin.partials.form-actions', ['cancelUrl' => route('admin.categories.index'), 'submitLabel' => $category->exists ? 'Save changes' : 'Create category'])
+    @include('admin.partials.form-actions', ['cancelUrl' => $cancelUrl, 'submitLabel' => match (true) {
+        $category->exists => 'Save changes',
+        $category->parent_id !== null => 'Create sub-category',
+        default => 'Create category',
+    }])
 </form>

@@ -26,16 +26,66 @@ function categoryPayload(array $overrides = []): array
 }
 
 describe('index', function () {
-    test('lists categories with their sub-categories and product counts', function () {
+    test('lists only top-level categories with a preview of their sub-categories', function () {
         $bags = Category::factory()->create(['name' => 'Bags', 'display_order' => 1]);
-        $backpacks = Category::factory()->create(['name' => 'Backpacks', 'parent_id' => $bags->id]);
+        Category::factory()->create(['name' => 'Backpacks', 'parent_id' => $bags->id, 'display_order' => 1]);
+        Category::factory()->create(['name' => 'Tote Bags', 'parent_id' => $bags->id, 'display_order' => 2]);
         Category::factory()->create(['name' => 'Pens', 'display_order' => 2]);
-        Product::factory()->count(2)->hasAttached($backpacks)->create();
 
         $this->actingAs(User::factory()->create())
             ->get(route('admin.categories.index'))
             ->assertOk()
-            ->assertSeeInOrder(['Bags', 'Backpacks', '2', 'Pens']);
+            ->assertSeeInOrder(['Bags', '2 sub-categories', 'Backpacks, Tote Bags', 'Pens', '+ Add sub-category'])
+            ->assertSee(route('admin.categories.show', $bags))
+            ->assertSee('2 categories · 2 sub-categories');
+    });
+
+    test('searches categories and sub-categories and shows where each one sits', function () {
+        $bags = Category::factory()->create(['name' => 'Bags']);
+        Category::factory()->create(['name' => 'Laptop Bags', 'parent_id' => $bags->id]);
+        Category::factory()->create(['name' => 'Pens']);
+
+        $this->actingAs(User::factory()->create())
+            ->get(route('admin.categories.index', ['search' => 'bag']))
+            ->assertOk()
+            ->assertSee('2 results for')
+            ->assertSeeInOrder(['Bags', 'Top level', 'Laptop Bags', 'Bags', '› sub-category'])
+            ->assertDontSee('Pens');
+    });
+});
+
+describe('show', function () {
+    test('shows a top-level category with its sub-categories and their product counts', function () {
+        $bags = Category::factory()->create(['name' => 'Bags']);
+        $backpacks = Category::factory()->create(['name' => 'Backpacks', 'parent_id' => $bags->id, 'display_order' => 1]);
+        Category::factory()->create(['name' => 'Tote Bags', 'parent_id' => $bags->id, 'display_order' => 2]);
+        Category::factory()->create(['name' => 'Pens']);
+        Product::factory()->count(3)->hasAttached($backpacks)->create();
+
+        $this->actingAs(User::factory()->create())
+            ->get(route('admin.categories.show', $bags))
+            ->assertOk()
+            ->assertSeeInOrder(['Categories', 'Bags', 'Sub-categories', 'Backpacks', '3', 'Tote Bags'])
+            ->assertSee(route('admin.categories.create', ['parent' => $bags->id]), false)
+            ->assertDontSee('Pens');
+    });
+
+    test('invites adding the first sub-category when there are none', function () {
+        $keychains = Category::factory()->create(['name' => 'Keychains']);
+
+        $this->actingAs(User::factory()->create())
+            ->get(route('admin.categories.show', $keychains))
+            ->assertOk()
+            ->assertSee('Keychains has no sub-categories yet.');
+    });
+
+    test('sends a sub-category to its edit form', function () {
+        $bags = Category::factory()->create();
+        $backpacks = Category::factory()->create(['parent_id' => $bags->id]);
+
+        $this->actingAs(User::factory()->create())
+            ->get(route('admin.categories.show', $backpacks))
+            ->assertRedirect(route('admin.categories.edit', $backpacks));
     });
 });
 
@@ -60,6 +110,17 @@ describe('store', function () {
             ->description->toBe('<div>Curated corporate gift sets.</div>');
 
         Storage::disk('public')->assertExists($category->image);
+    });
+
+    test('creates a sub-category and returns to its parent', function () {
+        $bags = Category::factory()->create(['name' => 'Bags']);
+
+        $this->actingAs(User::factory()->create())
+            ->post(route('admin.categories.store'), categoryPayload(['name' => 'Backpacks', 'parent_id' => $bags->id]))
+            ->assertRedirect(route('admin.categories.show', $bags))
+            ->assertSessionHas('status', 'Sub-category “Backpacks” created.');
+
+        expect(Category::query()->where('name', 'Backpacks')->sole()->parent_id)->toBe($bags->id);
     });
 
     test('adds a number to a generated slug that is already taken', function () {
@@ -248,6 +309,17 @@ describe('destroy', function () {
         $this->assertModelExists($pens);
     });
 
+    test('returns to the parent after deleting a sub-category', function () {
+        $bags = Category::factory()->create();
+        $backpacks = Category::factory()->create(['parent_id' => $bags->id]);
+
+        $this->actingAs(User::factory()->create())
+            ->delete(route('admin.categories.destroy', $backpacks))
+            ->assertRedirect(route('admin.categories.show', $bags));
+
+        $this->assertModelMissing($backpacks);
+    });
+
     test('moves the products to the chosen category and deletes the category', function () {
         $pens = Category::factory()->create();
         $stationery = Category::factory()->create(['name' => 'Stationery']);
@@ -280,4 +352,28 @@ test('the create and edit forms render', function () {
 
     $this->actingAs($admin)->get(route('admin.categories.create'))->assertOk()->assertSee('Create category');
     $this->actingAs($admin)->get(route('admin.categories.edit', $category))->assertOk()->assertSee('Drinkware')->assertSee('Delete category');
+});
+
+test('adding a sub-category from its parent preselects the parent', function () {
+    $drinkware = Category::factory()->create(['name' => 'Drinkware']);
+
+    $this->actingAs(User::factory()->create())
+        ->get(route('admin.categories.create', ['parent' => $drinkware->id]))
+        ->assertOk()
+        ->assertSee('Add sub-category')
+        ->assertSee('Create sub-category')
+        ->assertSee('<option value="'.$drinkware->id.'" selected>Drinkware</option>', false)
+        ->assertSee(route('admin.categories.show', $drinkware));
+});
+
+test('the sub-category edit form links back to its parent', function () {
+    $drinkware = Category::factory()->create(['name' => 'Drinkware']);
+    $mugs = Category::factory()->create(['name' => 'Mugs', 'parent_id' => $drinkware->id]);
+
+    $this->actingAs(User::factory()->create())
+        ->get(route('admin.categories.edit', $mugs))
+        ->assertOk()
+        ->assertSee('Edit sub-category')
+        ->assertSeeInOrder(['Categories', 'Drinkware', 'Mugs'])
+        ->assertSee(route('admin.categories.show', $drinkware));
 });
