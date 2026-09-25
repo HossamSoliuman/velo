@@ -1,8 +1,8 @@
 <x-layouts.admin title="Dashboard">
     <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         @foreach ([
-            ['Products', $stats['products'], $stats['activeProducts'].' shown on the website', 'border-fan-magenta', route('admin.products.index')],
-            ['Active products', $stats['activeProducts'], ($stats['products'] - $stats['activeProducts']).' hidden', 'border-fan-cyan', route('admin.products.index', ['status' => 'active'])],
+            ['Unread enquiries', $stats['unreadEnquiries'], number_format($stats['enquiries']).' '.str('enquiry')->plural($stats['enquiries']).' in total', 'border-fan-magenta', route('admin.enquiries.index', $stats['unreadEnquiries'] > 0 ? ['unread' => 1] : [])],
+            ['Products', $stats['products'], $stats['activeProducts'].' shown on the website', 'border-fan-cyan', route('admin.products.index')],
             ['Featured products', $stats['featuredProducts'], 'Shown on the home page', 'border-fan-lime', route('admin.products.index', ['featured' => 1])],
             ['Categories', $stats['categories'], $stats['activeCategories'].' active', 'border-fan-purple', route('admin.categories.index')],
         ] as [$label, $count, $detail, $accent, $url])
@@ -26,7 +26,33 @@
             </div>
         </x-admin.card>
 
-        <x-admin.card title="Recently updated products" class="lg:col-span-2">
+        <x-admin.card title="Latest enquiries" class="lg:col-span-2">
+            @if ($recentEnquiries->isEmpty())
+                <p class="text-sm text-slate-500">No enquiries yet. They appear here when a visitor clicks Enquire Now or uses the contact form.</p>
+            @else
+                <ul class="-my-3 divide-y divide-slate-100">
+                    @foreach ($recentEnquiries as $enquiry)
+                        <li class="flex items-center gap-4 py-3">
+                            <span @class(['size-2 shrink-0 rounded-full', 'bg-fan-magenta' => $enquiry->isUnread(), 'bg-transparent' => ! $enquiry->isUnread()])
+                                @if ($enquiry->isUnread()) title="Unread" @endif></span>
+                            <div class="min-w-0 flex-1">
+                                <a href="{{ route('admin.enquiries.show', $enquiry) }}" @class(['block truncate text-sm text-ink hover:text-brand-600', 'font-bold' => $enquiry->isUnread(), 'font-semibold' => ! $enquiry->isUnread()])>
+                                    {{ $enquiry->name }}@if ($enquiry->isUnread())<span class="sr-only"> (unread)</span>@endif
+                                </a>
+                                <p class="truncate text-xs text-slate-500">
+                                    {{ $enquiry->product_name ?? 'General enquiry' }}@if ($enquiry->quantity !== null) · qty {{ number_format($enquiry->quantity) }}@endif
+                                    · {{ $enquiry->created_at->diffForHumans() }}
+                                </p>
+                            </div>
+                            <x-admin.enquiry-status :status="$enquiry->status" class="shrink-0" />
+                        </li>
+                    @endforeach
+                </ul>
+                <a href="{{ route('admin.enquiries.index') }}" class="mt-5 inline-block text-sm font-semibold text-brand-600 hover:text-brand-800">All enquiries →</a>
+            @endif
+        </x-admin.card>
+
+        <x-admin.card title="Recently updated products" class="lg:col-span-3">
             @if ($recentProducts->isEmpty())
                 <p class="text-sm text-slate-500">No products yet. <a href="{{ route('admin.products.create') }}" class="font-semibold text-brand-600 hover:text-brand-800">Add your first product.</a></p>
             @else

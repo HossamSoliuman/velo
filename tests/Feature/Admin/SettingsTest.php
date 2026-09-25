@@ -106,3 +106,21 @@ test('rejects invalid contact settings', function (array $overrides, string $fie
     'social link that is not a URL' => [['facebook_url' => 'velo-page'], 'facebook_url'],
     'menu limit of zero' => [['nav_category_limit' => '0'], 'nav_category_limit'],
 ]);
+
+test('saves the enquiry email sender name and reply-to address', function () {
+    $this->actingAs(User::factory()->create())
+        ->put(route('admin.settings.update'), settingsPayload([
+            'enquiry_from_name' => 'Velo Website',
+            'enquiry_reply_to' => 'sales-team@velo.example',
+        ]))
+        ->assertSessionHasNoErrors();
+
+    expect(SiteSetting::value('enquiry_from_name'))->toBe('Velo Website')
+        ->and(SiteSetting::value('enquiry_reply_to'))->toBe('sales-team@velo.example');
+});
+
+test('rejects an invalid enquiry reply-to address', function () {
+    $this->actingAs(User::factory()->create())
+        ->put(route('admin.settings.update'), settingsPayload(['enquiry_reply_to' => 'sales']))
+        ->assertSessionHasErrors('enquiry_reply_to');
+});

@@ -68,6 +68,13 @@ return [
     'timezone' => 'UTC',
 
     /*
+    | Dates are stored in UTC and shown to the business, in the admin panel
+    | and enquiry emails, in this local time zone.
+    */
+
+    'display_timezone' => env('APP_DISPLAY_TIMEZONE', 'Asia/Kolkata'),
+
+    /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration
     |--------------------------------------------------------------------------

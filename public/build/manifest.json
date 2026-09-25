@@ -48,7 +48,11 @@
     "src": "_montserrat-800-normal-axpkC1rd.woff2"
   },
   "resources/css/app.css": {
+<<<<<<< Updated upstream
     "file": "assets/app-DFIisFcU.css",
+=======
+    "file": "assets/app-CslGlWf4.css",
+>>>>>>> Stashed changes
     "name": "app",
     "names": [
       "app.css"
@@ -69,7 +73,7 @@
     ]
   },
   "resources/js/app.js": {
-    "file": "assets/app-DSWL2TQY.js",
+    "file": "assets/app-DR9nCy88.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,

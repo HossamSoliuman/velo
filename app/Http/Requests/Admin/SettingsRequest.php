@@ -45,6 +45,8 @@ class SettingsRequest extends FormRequest
             'whatsapp' => ['nullable', 'string', 'max:50'],
             'email' => ['nullable', 'email', 'max:255'],
             'enquiry_email' => ['required', 'email', 'max:255'],
+            'enquiry_reply_to' => ['nullable', 'email', 'max:255'],
+            'enquiry_from_name' => ['nullable', 'string', 'max:100'],
             'address' => ['nullable', 'string', 'max:500'],
             'business_hours' => ['nullable', 'string', 'max:255'],
             'map_embed_url' => ['nullable', 'url:https', 'max:2000'],
@@ -67,6 +69,8 @@ class SettingsRequest extends FormRequest
     {
         return [
             'enquiry_email' => 'enquiry email',
+            'enquiry_reply_to' => 'reply-to address',
+            'enquiry_from_name' => 'sender name',
             'map_embed_url' => 'map embed URL',
             'facebook_url' => 'Facebook URL',
             'instagram_url' => 'Instagram URL',

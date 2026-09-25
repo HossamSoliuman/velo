@@ -29,14 +29,27 @@
                 <x-admin.input name="phone" label="Phone" :value="$settings['phone'] ?? ''" />
                 <x-admin.input name="whatsapp" label="WhatsApp number" :value="$settings['whatsapp'] ?? ''" />
                 <x-admin.input name="email" type="email" label="Public email" :value="$settings['email'] ?? ''" />
-                <x-admin.input name="enquiry_email" type="email" label="Enquiry email" :value="$settings['enquiry_email'] ?? ''" required
-                    hint="Enquiries from the website are emailed to this address." />
                 <x-admin.input name="business_hours" label="Business hours" :value="$settings['business_hours'] ?? ''" />
                 <x-admin.input name="map_embed_url" type="url" label="Google Maps embed URL" :value="$settings['map_embed_url'] ?? ''" placeholder="https://www.google.com/maps/embed?pb=…"
                     hint="In Google Maps choose Share → Embed a map and copy the address inside src=&quot;…&quot;." />
             </div>
             <div class="mt-6">
                 <x-admin.textarea name="address" label="Address" :value="$settings['address'] ?? ''" rows="2" />
+            </div>
+        </x-admin.card>
+
+        <x-admin.card title="Enquiry emails" description="Every enquiry is saved under Enquiries and also emailed to the business.">
+            <div class="grid gap-6 sm:grid-cols-2">
+                <x-admin.input name="enquiry_email" type="email" label="Send enquiries to" :value="$settings['enquiry_email'] ?? ''" required
+                    hint="The address that receives the enquiry emails." />
+                <x-admin.input name="enquiry_reply_to" type="email" label="Reply-to address" :value="$settings['enquiry_reply_to'] ?? ''" placeholder="The customer's email"
+                    hint="Leave blank so that replying to an enquiry email goes straight to the customer." />
+                <x-admin.input name="enquiry_from_name" label="Sender name" :value="$settings['enquiry_from_name'] ?? ''" :placeholder="$settings['site_name'] ?? ''" maxlength="100"
+                    hint="Leave blank to use the business name." />
+                <x-admin.field label="Sender address">
+                    <p class="rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-700 ring-1 ring-slate-200">{{ config('mail.from.address') }}</p>
+                    <p class="text-xs text-slate-500">Set with the SMTP account in the server's mail configuration, so emails pass spam checks.</p>
+                </x-admin.field>
             </div>
         </x-admin.card>
 

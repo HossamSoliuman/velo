@@ -49,6 +49,9 @@
                         @if ($isCurrent) aria-current="page" @endif>
                         <svg class="size-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ $icon }}"/></svg>
                         {{ $label }}
+                        @if ($routeName === 'admin.enquiries.index' && $unreadEnquiries > 0)
+                            <span class="ml-auto rounded-full bg-fan-magenta px-2 py-0.5 text-xs font-bold text-white">{{ $unreadEnquiries }}<span class="sr-only"> unread</span></span>
+                        @endif
                     </a>
                 @endforeach
             </nav>

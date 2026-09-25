@@ -22,6 +22,8 @@ class SiteSettingSeeder extends Seeder
             'whatsapp' => '+91 00000 00000',
             'email' => 'info@velo.example',
             'enquiry_email' => 'enquiry@velo.example',
+            'enquiry_reply_to' => '',
+            'enquiry_from_name' => '',
             'address' => 'Business address, City, State – 000000',
             'business_hours' => 'Mon – Sat, 10:00 AM – 7:00 PM',
             'facebook_url' => '',

@@ -9,6 +9,8 @@ use App\Http\Controllers\Admin\CategoryOrderController;
 use App\Http\Controllers\Admin\CategoryStatusController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\ECatalogController;
+use App\Http\Controllers\Admin\EnquiryController;
+use App\Http\Controllers\Admin\EnquiryReadController;
 use App\Http\Controllers\Admin\PageController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductOrderController;
@@ -49,6 +51,9 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::patch('product-order', [ProductOrderController::class, 'update'])->name('product-order.update');
     Route::patch('products/{product}/status', [ProductStatusController::class, 'update'])->name('products.status.update');
     Route::resource('products', ProductController::class)->except('show');
+
+    Route::patch('enquiries/{enquiry}/read', [EnquiryReadController::class, 'update'])->name('enquiries.read.update');
+    Route::resource('enquiries', EnquiryController::class)->only(['index', 'show', 'update', 'destroy']);
 
     Route::get('pages', [PageController::class, 'index'])->name('pages.index');
     Route::get('pages/{page}/edit', [PageController::class, 'edit'])->name('pages.edit');
