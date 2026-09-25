@@ -15,6 +15,9 @@ class SiteSettingSeeder extends Seeder
         $settings = [
             'site_name' => 'Velo Printing & Gifting',
             'tagline' => 'Corporate gifting & printing, made memorable.',
+            'hero_title' => 'Gifts that carry your brand',
+            'hero_highlight' => 'further.',
+            'hero_subtitle' => 'Customised gift sets, diaries, bags, pens, electronics and printing — branded with your logo and delivered in bulk.',
             'phone' => '+91 00000 00000',
             'whatsapp' => '+91 00000 00000',
             'email' => 'info@velo.example',
@@ -36,6 +39,7 @@ class SiteSettingSeeder extends Seeder
                 ['min' => 2500, 'max' => null],
             ]),
             'e_catalog_path' => '',
+            'e_catalog_updated_at' => '',
         ];
 
         foreach ($settings as $key => $value) {

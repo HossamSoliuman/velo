@@ -13,11 +13,14 @@
                 <span class="size-2 rounded-full bg-fan-yellow"></span> Corporate gifting &amp; printing
             </p>
             <h1 class="mt-6 max-w-2xl text-4xl leading-tight font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-                Gifts that carry your brand <span class="text-fan-yellow">further.</span>
+                {{ SiteSetting::value('hero_title', 'Gifts that carry your brand') }}
+                @if ($heroHighlight = SiteSetting::value('hero_highlight'))
+                    <span class="text-fan-yellow">{{ $heroHighlight }}</span>
+                @endif
             </h1>
-            <p class="mt-6 max-w-xl text-lg text-white/85">
-                Customised gift sets, diaries, bags, pens, electronics and printing — branded with your logo and delivered in bulk.
-            </p>
+            @if ($heroSubtitle = SiteSetting::value('hero_subtitle'))
+                <p class="mt-6 max-w-xl text-lg text-white/85">{{ $heroSubtitle }}</p>
+            @endif
             <div class="mt-10 flex flex-wrap gap-4">
                 <a href="{{ route('categories.index') }}" class="rounded-full bg-white px-7 py-3.5 text-sm font-bold text-brand-700 shadow-lg transition hover:bg-brand-50">Explore Products</a>
                 <a href="{{ route('contact') }}" class="rounded-full bg-fan-magenta px-7 py-3.5 text-sm font-bold text-white shadow-lg transition hover:brightness-110">Request a Quote</a>

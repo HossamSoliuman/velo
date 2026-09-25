@@ -12,6 +12,15 @@ use Illuminate\Support\Str;
 #[Fillable(['product_id', 'path', 'alt', 'sort_order'])]
 class ProductImage extends Model
 {
+    protected static function booted(): void
+    {
+        static::deleted(function (ProductImage $image) {
+            if (! $image->isExternal()) {
+                Storage::disk('public')->delete($image->path);
+            }
+        });
+    }
+
     protected function casts(): array
     {
         return [
@@ -32,8 +41,16 @@ class ProductImage extends Model
      */
     protected function url(): Attribute
     {
-        return Attribute::get(fn (): string => Str::startsWith($this->path, ['http://', 'https://'])
+        return Attribute::get(fn (): string => $this->isExternal()
             ? $this->path
             : Storage::disk('public')->url($this->path));
+    }
+
+    /**
+     * Whether the image is hosted elsewhere rather than stored on the public disk.
+     */
+    public function isExternal(): bool
+    {
+        return Str::startsWith($this->path, ['http://', 'https://']);
     }
 }

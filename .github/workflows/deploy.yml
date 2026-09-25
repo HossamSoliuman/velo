@@ -21,6 +21,4 @@ jobs:
             cd domains/sachinenterprise.in/public_html/velo
             git pull origin main
             composer install
-            npm install
-            npm run build
             php artisan migrate

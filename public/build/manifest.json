@@ -1,4 +1,8 @@
 {
+  "_alpine-DiIfW3VA.js": {
+    "file": "assets/alpine-DiIfW3VA.js",
+    "name": "alpine"
+  },
   "_fonts-Z93A_ASK.css": {
     "file": "assets/fonts-Z93A_ASK.css",
     "src": "_fonts-Z93A_ASK.css"
@@ -44,7 +48,7 @@
     "src": "_montserrat-800-normal-axpkC1rd.woff2"
   },
   "resources/css/app.css": {
-    "file": "assets/app-BkrDsyuU.css",
+    "file": "assets/app-csutu4uc.css",
     "name": "app",
     "names": [
       "app.css"
@@ -52,10 +56,25 @@
     "src": "resources/css/app.css",
     "isEntry": true
   },
+  "resources/js/admin.js": {
+    "file": "assets/admin-CpmBDMxj.js",
+    "name": "admin",
+    "src": "resources/js/admin.js",
+    "isEntry": true,
+    "imports": [
+      "_alpine-DiIfW3VA.js"
+    ],
+    "css": [
+      "assets/admin-DKRv1JaK.css"
+    ]
+  },
   "resources/js/app.js": {
-    "file": "assets/app-iS0JY3jK.js",
+    "file": "assets/app-DSWL2TQY.js",
     "name": "app",
     "src": "resources/js/app.js",
-    "isEntry": true
+    "isEntry": true,
+    "imports": [
+      "_alpine-DiIfW3VA.js"
+    ]
   }
 }

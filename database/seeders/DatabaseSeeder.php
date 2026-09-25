@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\UserRole;
 use App\Models\Category;
 use App\Models\SiteSetting;
 use App\Models\User;
@@ -23,13 +24,14 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => config('velo.admin.name'),
                 'password' => config('velo.admin.password'),
-                'role' => 'admin',
+                'role' => UserRole::Admin,
                 'is_active' => true,
             ],
         );
 
         $this->call([
             SiteSettingSeeder::class,
+            PageSeeder::class,
             CatalogSeeder::class,
         ]);
 

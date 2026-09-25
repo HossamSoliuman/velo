@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use App\Casts\SanitizedHtml;
+use App\Models\Concerns\HasSeoFields;
+use App\Models\Concerns\HasSlug;
+use App\Models\Concerns\HasSlugRedirects;
 use Database\Factories\ProductFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -21,11 +25,12 @@ use Illuminate\Support\Number;
 class Product extends Model
 {
     /** @use HasFactory<ProductFactory> */
-    use HasFactory;
+    use HasFactory, HasSeoFields, HasSlug, HasSlugRedirects;
 
     protected function casts(): array
     {
         return [
+            'description' => SanitizedHtml::class,
             'price' => 'decimal:2',
             'minimum_qty' => 'integer',
             'is_active' => 'boolean',

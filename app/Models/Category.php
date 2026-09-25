@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use App\Casts\SanitizedHtml;
+use App\Models\Concerns\HasSeoFields;
+use App\Models\Concerns\HasSlug;
+use App\Models\Concerns\HasSlugRedirects;
 use Database\Factories\CategoryFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Scope;
@@ -21,7 +25,7 @@ use Illuminate\Support\Facades\Cache;
 class Category extends Model
 {
     /** @use HasFactory<CategoryFactory> */
-    use HasFactory;
+    use HasFactory, HasSeoFields, HasSlug, HasSlugRedirects;
 
     public const NAVIGATION_CACHE_KEY = 'navigation.categories';
 
@@ -50,6 +54,7 @@ class Category extends Model
     protected function casts(): array
     {
         return [
+            'description' => SanitizedHtml::class,
             'is_active' => 'boolean',
             'show_in_menu' => 'boolean',
             'display_order' => 'integer',

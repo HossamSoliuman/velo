@@ -1,0 +1,68 @@
+/*
+ * Trix editor styling for the admin panel. Tailwind's preflight resets lists and headings,
+ * so the editor's content styles are restored here.
+ */
+trix-toolbar [data-trix-button-group='file-tools'] {
+    display: none;
+}
+
+trix-toolbar .trix-button-row {
+    flex-wrap: wrap;
+    row-gap: 0.25rem;
+}
+
+trix-editor {
+    min-height: 12rem;
+    max-height: 36rem;
+    overflow-y: auto;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.5rem;
+    background: #fff;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    line-height: 1.65;
+}
+
+trix-editor:focus {
+    border-color: #3b75ba;
+    outline: 2px solid #3b75ba;
+    outline-offset: -1px;
+}
+
+trix-editor h1 {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+trix-editor ul {
+    list-style: disc;
+    padding-left: 1.5rem;
+}
+
+trix-editor ol {
+    list-style: decimal;
+    padding-left: 1.5rem;
+}
+
+trix-editor blockquote {
+    border-left: 3px solid #b5cdeb;
+    padding-left: 0.75rem;
+    color: #475569;
+}
+
+trix-editor pre {
+    white-space: pre-wrap;
+    border-radius: 0.375rem;
+    background: #f1f5f9;
+    padding: 0.5rem 0.75rem;
+    font-family: ui-monospace, monospace;
+}
+
+trix-editor a {
+    color: #2f62a0;
+    text-decoration: underline;
+}
+
+trix-editor.is-invalid {
+    border-color: #f87171;
+}

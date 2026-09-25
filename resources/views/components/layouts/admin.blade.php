@@ -24,7 +24,7 @@
         <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
 
         @fonts
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        @vite(['resources/css/app.css', 'resources/js/admin.js'])
     </head>
     <body class="bg-slate-50" x-data="{ sidebar: false }">
         {{-- Sidebar --}}
@@ -39,7 +39,7 @@
 
             <nav class="flex-1 space-y-1 overflow-y-auto px-3 py-6 text-sm font-semibold" aria-label="Admin">
                 @foreach ($navigation as [$label, $routeName, $icon])
-                    @php($isCurrent = request()->routeIs(str($routeName)->beforeLast('.').'*'))
+                    @php($isCurrent = request()->routeIs(substr_count($routeName, '.') > 1 ? str($routeName)->beforeLast('.').'.*' : $routeName))
                     <a href="{{ Route::has($routeName) ? route($routeName) : '#' }}"
                         @class([
                             'flex items-center gap-3 rounded-lg px-3 py-2.5 transition',
@@ -65,7 +65,7 @@
 
                 <div class="ml-auto flex items-center gap-4 text-sm">
                     @auth
-                        <span class="hidden text-slate-600 sm:inline">{{ auth()->user()->name }}</span>
+                        <a href="{{ Route::has('admin.account.edit') ? route('admin.account.edit') : '#' }}" class="hidden font-semibold text-slate-600 hover:text-brand-700 sm:inline">{{ auth()->user()->name }}</a>
                         @if (Route::has('admin.logout'))
                             <form method="POST" action="{{ route('admin.logout') }}">
                                 @csrf
@@ -80,6 +80,23 @@
                 @if (session('status'))
                     <div class="mb-6 rounded-lg border-l-4 border-fan-lime bg-white px-4 py-3 text-sm text-slate-700 shadow-sm" role="status">
                         {{ session('status') }}
+                    </div>
+                @endif
+
+                @if (session('warnings'))
+                    <div class="mb-6 rounded-lg border-l-4 border-fan-yellow bg-white px-4 py-3 text-sm text-slate-700 shadow-sm" role="status">
+                        <p class="font-semibold text-slate-800">SEO suggestions</p>
+                        <ul class="mt-1 list-disc space-y-1 pl-5">
+                            @foreach (session('warnings') as $warning)
+                                <li>{{ $warning }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
+                @if (isset($errors) && $errors->any())
+                    <div class="mb-6 rounded-lg border-l-4 border-red-500 bg-white px-4 py-3 text-sm text-red-700 shadow-sm" role="alert">
+                        Some fields need your attention. Please check the highlighted fields below.
                     </div>
                 @endif
 
