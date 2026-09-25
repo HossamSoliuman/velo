@@ -3,6 +3,8 @@
 use App\Models\Product;
 use App\Models\SiteSetting;
 use App\Models\User;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @param  array<string, mixed>  $overrides
@@ -27,6 +29,7 @@ function settingsPayload(array $overrides = []): array
         'instagram_url' => 'https://instagram.com/velo',
         'linkedin_url' => '',
         'currency_symbol' => '₹',
+        'currency_code' => 'INR',
         'show_prices' => '1',
         'nav_category_limit' => '6',
         'price_ranges' => [],
@@ -143,4 +146,54 @@ test('rejects an invalid enquiry reply-to address', function () {
     $this->actingAs(User::factory()->create())
         ->put(route('admin.settings.update'), settingsPayload(['enquiry_reply_to' => 'sales']))
         ->assertSessionHasErrors('enquiry_reply_to');
+});
+
+test('saves the home page search settings and currency code', function () {
+    $this->actingAs(User::factory()->create())
+        ->put(route('admin.settings.update'), settingsPayload([
+            'home_meta_title' => 'Corporate Gifts in India | Velo',
+            'home_meta_description' => 'Branded gifts delivered in bulk.',
+            'currency_code' => 'usd',
+        ]))
+        ->assertSessionHasNoErrors();
+
+    expect(SiteSetting::value('home_meta_title'))->toBe('Corporate Gifts in India | Velo')
+        ->and(SiteSetting::value('home_meta_description'))->toBe('Branded gifts delivered in bulk.')
+        ->and(SiteSetting::value('currency_code'))->toBe('USD');
+});
+
+test('rejects a currency code that is not three letters', function () {
+    $this->actingAs(User::factory()->create())
+        ->put(route('admin.settings.update'), settingsPayload(['currency_code' => 'RUPEE']))
+        ->assertSessionHasErrors('currency_code');
+});
+
+test('uploads, keeps and removes the default share image', function () {
+    Storage::fake('public');
+    $admin = User::factory()->create();
+
+    $this->actingAs($admin)->put(route('admin.settings.update'), settingsPayload([
+        'default_og_image' => UploadedFile::fake()->image('share.jpg', 1200, 630),
+    ]))->assertSessionHasNoErrors();
+
+    $path = SiteSetting::value('default_og_image');
+    expect($path)->toStartWith('seo/');
+    Storage::disk('public')->assertExists($path);
+
+    $this->actingAs($admin)->put(route('admin.settings.update'), settingsPayload());
+    expect(SiteSetting::value('default_og_image'))->toBe($path);
+
+    $this->actingAs($admin)->put(route('admin.settings.update'), settingsPayload(['remove_default_og_image' => '1']));
+    expect(SiteSetting::value('default_og_image'))->toBeNull();
+    Storage::disk('public')->assertMissing($path);
+});
+
+test('rejects a default share image that is not an image', function () {
+    Storage::fake('public');
+
+    $this->actingAs(User::factory()->create())
+        ->put(route('admin.settings.update'), settingsPayload([
+            'default_og_image' => UploadedFile::fake()->create('share.pdf', 100, 'application/pdf'),
+        ]))
+        ->assertSessionHasErrors('default_og_image');
 });

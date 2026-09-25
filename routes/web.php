@@ -8,7 +8,9 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PriceRangeController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\RobotsTxtController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\SitemapController;
 use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\Request;
@@ -46,4 +48,7 @@ Route::get('/e-catalog', [ECatalogController::class, 'show'])->name('e-catalog')
 Route::get('/e-catalog/download', [ECatalogController::class, 'download'])->name('e-catalog.download');
 
 Route::get('/contact', [ContactController::class, 'show'])->name('contact');
+
+Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
+Route::get('/robots.txt', RobotsTxtController::class)->name('robots');
 Route::post('/enquiries', [EnquiryController::class, 'store'])->middleware('throttle:enquiries')->name('enquiries.store');

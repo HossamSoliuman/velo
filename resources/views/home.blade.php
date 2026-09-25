@@ -2,9 +2,27 @@
     use App\Models\SiteSetting;
 
     $accents = ['border-fan-magenta', 'border-fan-cyan', 'border-fan-lime', 'border-fan-purple', 'border-fan-yellow', 'border-fan-blue'];
+    $organization = array_filter([
+        '@context' => 'https://schema.org',
+        '@type' => 'Organization',
+        'name' => SiteSetting::value('site_name', config('app.name')),
+        'url' => route('home'),
+        'email' => SiteSetting::value('email'),
+        'telephone' => SiteSetting::value('phone'),
+        'address' => SiteSetting::value('address'),
+        'sameAs' => array_values(array_filter([
+            SiteSetting::value('facebook_url'),
+            SiteSetting::value('instagram_url'),
+            SiteSetting::value('linkedin_url'),
+        ])),
+    ], fn (mixed $value): bool => filled($value));
 @endphp
 
-<x-layouts.app :description="SiteSetting::value('tagline')">
+<x-layouts.app :meta-title="SiteSetting::value('home_meta_title')" :description="SiteSetting::value('home_meta_description') ?: SiteSetting::value('tagline')">
+    <x-slot:head>
+        <x-json-ld :data="$organization" />
+    </x-slot:head>
+
     {{-- Hero --}}
     <section class="relative overflow-hidden bg-brand-500 text-white">
         <x-logo-mark class="pointer-events-none absolute -right-24 -bottom-32 size-[34rem] text-white/10 sm:-right-10 lg:right-10 lg:-bottom-20" />

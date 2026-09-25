@@ -5,7 +5,7 @@
     $isPolicy = in_array($page->slug, ['privacy-policy', 'terms-and-conditions'], true);
 @endphp
 
-<x-layouts.app :title="$page->title" :description="$page->meta_description ?: Str::limit(SanitizedHtml::plainText($page->content), 160)">
+<x-layouts.app :title="$page->title" :description="Str::limit(SanitizedHtml::plainText($page->content), 160)" :seo="$page" :canonical="$page->url">
     <x-page-header :title="$page->title" :breadcrumbs="[[$page->title, null]]">
         @if ($isPolicy)
             <p class="text-sm">Last updated {{ $page->updated_at->format('j F Y') }}</p>

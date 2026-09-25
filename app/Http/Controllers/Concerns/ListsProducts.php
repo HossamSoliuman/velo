@@ -105,6 +105,23 @@ trait ListsProducts
         ];
     }
 
+    /**
+     * The listing's canonical address: the filters that make it a distinct landing page, plus the page number.
+     * Sorting and narrowing filters show the same products again, so search engines are pointed past them.
+     *
+     * @param  LengthAwarePaginator<int, Product>  $products
+     * @param  array<string, int|null>  $landingFilters
+     */
+    protected function canonicalListingUrl(Request $request, LengthAwarePaginator $products, array $landingFilters = []): string
+    {
+        $query = Arr::query(array_filter(
+            [...$landingFilters, 'page' => $products->currentPage() > 1 ? $products->currentPage() : null],
+            fn (?int $value) => $value !== null,
+        ));
+
+        return $request->url().($query === '' ? '' : '?'.$query);
+    }
+
     private function wholeNumberParameter(Request $request, string $key): ?int
     {
         $value = $request->query($key);

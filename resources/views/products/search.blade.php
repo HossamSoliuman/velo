@@ -1,4 +1,4 @@
-<x-layouts.app :title="$search !== '' ? 'Search results for “'.$search.'”' : 'Search'">
+<x-layouts.app :title="$search !== '' ? 'Search results for “'.$search.'”' : 'Search'" robots="noindex,follow">
     <x-page-header :title="$search !== '' ? 'Results for “'.$search.'”' : 'Search products'" eyebrow="Search" :breadcrumbs="[['Search', null]]">
         <form action="{{ route('search') }}" method="GET" role="search" class="mt-2 flex max-w-xl overflow-hidden rounded-full border-2 border-brand-200 bg-white focus-within:border-brand-400">
             <label for="search-page-query" class="sr-only">Search products by name or SKU</label>

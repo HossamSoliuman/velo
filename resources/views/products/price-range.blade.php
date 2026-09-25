@@ -5,7 +5,7 @@
         : 'block whitespace-nowrap rounded-full bg-brand-50 px-4 py-2 text-sm font-semibold text-brand-700 hover:bg-brand-100';
 @endphp
 
-<x-layouts.app :title="$heading" description="Browse customisable corporate gifts and printing by budget.">
+<x-layouts.app :title="$heading" description="Browse customisable corporate gifts and printing by budget." :canonical="$canonicalUrl">
     <x-page-header :title="$heading" :eyebrow="$isFiltered ? 'Shop by Price' : 'Budget'"
         :breadcrumbs="$isFiltered ? [['Shop by Price', route('price-range')], [$heading, null]] : [['Shop by Price', null]]">
         Find branded gifts that fit your budget. Prices shown are per unit; your quotation reflects quantity and branding.

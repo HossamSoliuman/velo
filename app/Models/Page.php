@@ -6,6 +6,7 @@ use App\Casts\SanitizedHtml;
 use App\Models\Concerns\HasSeoFields;
 use Database\Factories\PageFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -25,5 +26,15 @@ class Page extends Model
     public function getRouteKeyName(): string
     {
         return 'slug';
+    }
+
+    /**
+     * The page's public address. Each content page is served at its slug, e.g. /about-us.
+     *
+     * @return Attribute<string, never>
+     */
+    protected function url(): Attribute
+    {
+        return Attribute::get(fn (): string => url($this->slug));
     }
 }

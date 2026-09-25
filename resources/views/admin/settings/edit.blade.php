@@ -3,7 +3,7 @@
 @endphp
 
 <x-layouts.admin title="Settings">
-    <form method="POST" action="{{ route('admin.settings.update') }}" class="space-y-6">
+    <form method="POST" action="{{ route('admin.settings.update') }}" enctype="multipart/form-data" class="space-y-6">
         @csrf
         @method('PUT')
 
@@ -28,6 +28,19 @@
             <x-admin.input name="promo_title" label="Heading" :value="$settings['promo_title'] ?? ''" maxlength="120" />
             <div class="mt-6">
                 <x-admin.textarea name="promo_text" label="Text" :value="$settings['promo_text'] ?? ''" rows="3" maxlength="400" />
+            </div>
+        </x-admin.card>
+
+        <x-admin.card title="Search engines and sharing" description="How the home page appears in search results, and the image used when a page without its own image is shared.">
+            <x-admin.input name="home_meta_title" label="Home page meta title" :value="$settings['home_meta_title'] ?? ''" :counter="60" :placeholder="$settings['site_name'] ?? ''"
+                hint="Leave blank to use the business name." />
+            <div class="mt-6">
+                <x-admin.textarea name="home_meta_description" label="Home page meta description" :value="$settings['home_meta_description'] ?? ''" :counter="160" rows="2"
+                    hint="Leave blank to use the tagline." />
+            </div>
+            <div class="mt-6">
+                <x-admin.image-input name="default_og_image" label="Default social share image" :path="$settings['default_og_image'] ?? null" remove-name="remove_default_og_image"
+                    hint="Used on WhatsApp, LinkedIn and Facebook previews when a page has no image of its own. Recommended 1200 × 630 px, JPG, PNG or WebP, up to 4 MB." />
             </div>
         </x-admin.card>
 
@@ -70,7 +83,11 @@
 
         <x-admin.card title="Catalogue" description="How prices and categories are presented on the website.">
             <div class="grid gap-6 sm:grid-cols-2">
-                <x-admin.input name="currency_symbol" label="Currency symbol" :value="$settings['currency_symbol'] ?? '₹'" required maxlength="5" class="sm:w-32" />
+                <div class="grid grid-cols-2 gap-6 sm:flex">
+                    <x-admin.input name="currency_symbol" label="Currency symbol" :value="$settings['currency_symbol'] ?? '₹'" required maxlength="5" class="sm:w-32" />
+                    <x-admin.input name="currency_code" label="Currency code" :value="$settings['currency_code'] ?? 'INR'" required maxlength="3" class="uppercase sm:w-32"
+                        hint="For search engines, e.g. INR." />
+                </div>
                 <x-admin.input name="nav_category_limit" type="number" label="Categories in the main menu bar" :value="$settings['nav_category_limit'] ?? 7" min="1" max="12" required class="sm:w-32"
                     hint="The rest are listed under All Categories." />
             </div>

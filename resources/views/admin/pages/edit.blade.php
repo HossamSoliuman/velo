@@ -7,7 +7,7 @@
 <x-layouts.admin :title="'Edit '.$page->title">
     <div class="mb-6 flex flex-wrap items-center justify-between gap-4">
         <a href="{{ route('admin.pages.index') }}" class="text-sm font-semibold text-brand-600 hover:text-brand-800">← All pages</a>
-        <a href="{{ url($page->slug) }}" target="_blank" class="text-sm font-semibold text-brand-600 hover:text-brand-800">View on website ↗</a>
+        <a href="{{ $page->url }}" target="_blank" class="text-sm font-semibold text-brand-600 hover:text-brand-800">View on website ↗</a>
     </div>
 
     <form method="POST" action="{{ route('admin.pages.update', $page) }}" enctype="multipart/form-data"

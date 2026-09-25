@@ -1,6 +1,21 @@
 @props(['items' => []])
 
 {{-- $items: list of [label, url] after Home. The last item is the current page. --}}
+@php
+    $trail = [['Home', route('home')], ...array_values($items)];
+    $structuredData = [
+        '@context' => 'https://schema.org',
+        '@type' => 'BreadcrumbList',
+        'itemListElement' => array_map(fn (array $item, int $index): array => array_filter([
+            '@type' => 'ListItem',
+            'position' => $index + 1,
+            'name' => $item[0],
+            'item' => $item[1],
+        ]), $trail, array_keys($trail)),
+    ];
+@endphp
+
+<x-json-ld :data="$structuredData" />
 <nav aria-label="Breadcrumb" {{ $attributes }}>
     <ol class="flex flex-wrap items-center gap-1.5 text-xs font-semibold sm:text-sm">
         <li><a href="{{ route('home') }}" class="text-brand-600 hover:text-brand-800">Home</a></li>

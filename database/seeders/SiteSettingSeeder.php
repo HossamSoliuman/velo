@@ -33,6 +33,7 @@ class SiteSettingSeeder extends Seeder
             'linkedin_url' => '',
             'map_embed_url' => '',
             'currency_symbol' => '₹',
+            'currency_code' => 'INR',
             'show_prices' => '1',
             'nav_category_limit' => '7',
             'price_ranges' => json_encode([
@@ -42,6 +43,9 @@ class SiteSettingSeeder extends Seeder
                 ['min' => 1000, 'max' => 2500],
                 ['min' => 2500, 'max' => null],
             ]),
+            'home_meta_title' => '',
+            'home_meta_description' => '',
+            'default_og_image' => '',
             'e_catalog_path' => '',
             'e_catalog_updated_at' => '',
         ];

@@ -67,6 +67,44 @@ class Product extends Model
     }
 
     /**
+     * Schema.org Product data for search engines, built from the product's own details. The offer is
+     * left out while prices are hidden, so search results never show a price the website does not.
+     *
+     * @return array<string, mixed>
+     */
+    public function structuredData(?Category $category = null): array
+    {
+        $url = route('products.show', $this);
+
+        return array_filter([
+            '@context' => 'https://schema.org',
+            '@type' => 'Product',
+            'name' => $this->name,
+            'sku' => $this->sku,
+            'description' => $this->meta_description ?: $this->plain_description,
+            'image' => $this->images->map(fn (ProductImage $image): string => url($image->url))->all(),
+            'category' => $category?->name,
+            'url' => $url,
+            'offers' => SiteSetting::value('show_prices', true) ? [
+                '@type' => 'Offer',
+                'url' => $url,
+                'price' => number_format((float) $this->price, 2, '.', ''),
+                'priceCurrency' => SiteSetting::value('currency_code', 'INR'),
+                'availability' => 'https://schema.org/InStock',
+                'itemCondition' => 'https://schema.org/NewCondition',
+                'eligibleQuantity' => [
+                    '@type' => 'QuantitativeValue',
+                    'minValue' => $this->minimum_qty,
+                ],
+                'seller' => [
+                    '@type' => 'Organization',
+                    'name' => SiteSetting::value('site_name', config('app.name')),
+                ],
+            ] : null,
+        ], fn (mixed $value): bool => filled($value));
+    }
+
+    /**
      * @return BelongsToMany<Category, $this>
      */
     public function categories(): BelongsToMany

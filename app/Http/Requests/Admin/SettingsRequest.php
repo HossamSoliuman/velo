@@ -21,6 +21,7 @@ class SettingsRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         $this->merge([
+            'currency_code' => strtoupper(trim((string) $this->input('currency_code'))),
             'price_ranges' => collect((array) $this->input('price_ranges', []))
                 ->filter(fn (mixed $range) => is_array($range) && (filled($range['min'] ?? null) || filled($range['max'] ?? null)))
                 ->values()
@@ -29,7 +30,7 @@ class SettingsRequest extends FormRequest
     }
 
     /**
-     * Get the validation rules that apply to the request. Every key except price ranges maps to one site setting.
+     * Get the validation rules that apply to the request. Every key except price ranges and the share image fields maps to one site setting.
      *
      * @return array<string, ValidationRule|array<mixed>|string>
      */
@@ -43,6 +44,10 @@ class SettingsRequest extends FormRequest
             'hero_subtitle' => ['nullable', 'string', 'max:300'],
             'promo_title' => ['nullable', 'string', 'max:120'],
             'promo_text' => ['nullable', 'string', 'max:400'],
+            'home_meta_title' => ['nullable', 'string', 'max:255'],
+            'home_meta_description' => ['nullable', 'string', 'max:500'],
+            'default_og_image' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
+            'remove_default_og_image' => ['boolean'],
             'phone' => ['nullable', 'string', 'max:50'],
             'whatsapp' => ['nullable', 'string', 'max:50'],
             'email' => ['nullable', 'email', 'max:255'],
@@ -56,6 +61,7 @@ class SettingsRequest extends FormRequest
             'instagram_url' => ['nullable', 'url:http,https', 'max:255'],
             'linkedin_url' => ['nullable', 'url:http,https', 'max:255'],
             'currency_symbol' => ['required', 'string', 'max:5'],
+            'currency_code' => ['required', 'regex:/^[A-Z]{3}$/'],
             'show_prices' => ['required', 'boolean'],
             'nav_category_limit' => ['required', 'integer', 'min:1', 'max:12'],
             'price_ranges' => ['array', 'max:10'],
@@ -70,6 +76,9 @@ class SettingsRequest extends FormRequest
     public function attributes(): array
     {
         return [
+            'home_meta_title' => 'home page meta title',
+            'home_meta_description' => 'home page meta description',
+            'default_og_image' => 'default social share image',
             'enquiry_email' => 'enquiry email',
             'enquiry_reply_to' => 'reply-to address',
             'enquiry_from_name' => 'sender name',
@@ -78,6 +87,7 @@ class SettingsRequest extends FormRequest
             'instagram_url' => 'Instagram URL',
             'linkedin_url' => 'LinkedIn URL',
             'nav_category_limit' => 'menu category limit',
+            'currency_code' => 'currency code',
             'price_ranges.*.min' => 'minimum price',
             'price_ranges.*.max' => 'maximum price',
         ];

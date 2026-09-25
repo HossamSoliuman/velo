@@ -82,6 +82,7 @@
         @endif
 
         @if ($products->isNotEmpty())
+            <h2 class="sr-only">Products</h2>
             <div class="mt-6 grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3">
                 @foreach ($products as $product)
                     <x-product-card :product="$product" />

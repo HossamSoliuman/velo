@@ -13,7 +13,11 @@
     ]));
 @endphp
 
-<x-layouts.app :title="$product->name" :description="$product->meta_description ?: Str::limit($product->plain_description, 160)">
+<x-layouts.app :title="$product->name" :description="Str::limit($product->plain_description, 160)" :seo="$product" :image="$images->first()?->url" type="product">
+    <x-slot:head>
+        <x-json-ld :data="$product->structuredData($primaryCategory)" />
+    </x-slot:head>
+
     <div class="border-b border-brand-100 bg-brand-50">
         <div class="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
             <x-breadcrumbs :items="$breadcrumbs" />

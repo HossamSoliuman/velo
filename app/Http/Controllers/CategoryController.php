@@ -52,12 +52,15 @@ class CategoryController extends Controller
                     ->whereIn('category_product.category_id', $categoryIds),
             ));
 
+        $products = $this->paginateProducts($query, $filters);
+
         return view('categories.show', [
             'category' => $category,
             'subCategories' => $category->parent_id === null
                 ? $category->children
                 : $category->parent->children()->active()->ordered()->get(),
-            'products' => $this->paginateProducts($query, $filters),
+            'products' => $products,
+            'canonicalUrl' => $this->canonicalListingUrl($request, $products),
             ...$this->listingViewData($request, $filters),
         ]);
     }

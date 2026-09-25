@@ -30,6 +30,7 @@ class PriceRangeController extends Controller
                 ? 'Shop by Price'
                 : SiteSetting::priceRangeLabel($filters['min'], $filters['max']),
             'products' => $products,
+            'canonicalUrl' => $this->canonicalListingUrl($request, $products, ['min' => $filters['min'], 'max' => $filters['max']]),
             'selectedCategory' => $category,
             'filterCategories' => $this->filterCategories(),
             ...$this->listingViewData($request, $filters),

@@ -1,4 +1,4 @@
-<x-layouts.app title="Page not found">
+<x-layouts.app title="Page not found" robots="noindex,follow">
     <section class="mx-auto max-w-3xl px-4 py-24 text-center sm:px-6">
         <x-logo-mark class="mx-auto size-16 text-brand-500" />
         <p class="mt-6 text-sm font-bold tracking-widest text-fan-magenta uppercase">Error 404</p>

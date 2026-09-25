@@ -1,16 +1,20 @@
-@props(['title' => null, 'description' => null])
-
-@php($siteName = \App\Models\SiteSetting::value('site_name', config('app.name')))
+@props([
+    'title' => null,
+    'metaTitle' => null,
+    'description' => null,
+    'seo' => null,
+    'canonical' => null,
+    'robots' => null,
+    'image' => null,
+    'type' => 'website',
+])
 
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="scroll-smooth">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>{{ $title ? $title.' | '.$siteName : $siteName }}</title>
-        @if ($description)
-            <meta name="description" content="{{ $description }}">
-        @endif
+        <x-seo :$title :meta-title="$metaTitle" :$description :$seo :$canonical :$robots :$image :$type />
         <meta name="theme-color" content="#3b75ba">
         <link rel="icon" href="{{ asset('favicon.svg') }}" type="image/svg+xml">
 
