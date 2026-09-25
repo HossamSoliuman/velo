@@ -19,7 +19,7 @@
                 <table class="min-w-full text-sm">
                     <thead class="bg-slate-50 text-left text-xs font-bold tracking-wide text-slate-500 uppercase">
                         <tr>
-                            <th scope="col" class="w-28 px-4 py-3">Order</th>
+                            <th scope="col" class="w-24 px-4 py-3">Order</th>
                             <th scope="col" class="px-4 py-3">Category</th>
                             <th scope="col" class="px-4 py-3">Products</th>
                             <th scope="col" class="px-4 py-3">Website</th>
@@ -31,7 +31,7 @@
                         @foreach ($categories as $category)
                             @include('admin.categories.row', ['category' => $category, 'isChild' => false])
                             @foreach ($category->children as $child)
-                                @include('admin.categories.row', ['category' => $child, 'isChild' => true])
+                                @include('admin.categories.row', ['category' => $child, 'isChild' => true, 'parent' => $category])
                             @endforeach
                         @endforeach
                     </tbody>

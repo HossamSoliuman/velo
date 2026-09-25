@@ -2,18 +2,16 @@
     <td class="px-4 py-3">
         <label for="order-{{ $category->id }}" class="sr-only">Display order for {{ $category->name }}</label>
         <input id="order-{{ $category->id }}" form="category-order" type="number" min="0" max="100000" name="order[{{ $category->id }}]" value="{{ $category->display_order }}"
-            @class(['w-20 rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:outline-none', 'ml-4' => $isChild])>
+            class="w-16 [appearance:textfield] rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-center text-sm focus:border-brand-500 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none focus:ring-2 focus:ring-brand-500/20 focus:outline-none">
     </td>
     <td class="px-4 py-3">
-        <div @class(['flex items-center gap-3', 'pl-4' => $isChild])>
+        <a href="{{ route('admin.categories.edit', $category) }}" class="font-semibold text-ink hover:text-brand-600">{{ $category->name }}</a>
+        <p class="text-xs text-slate-500">
             @if ($isChild)
-                <span class="text-slate-300" aria-hidden="true">↳</span>
+                <span class="font-semibold text-slate-600">In {{ $parent->name }}</span> ·
             @endif
-            <div class="min-w-0">
-                <a href="{{ route('admin.categories.edit', $category) }}" class="font-semibold text-ink hover:text-brand-600">{{ $category->name }}</a>
-                <p class="text-xs text-slate-500">/category/{{ $category->slug }}</p>
-            </div>
-        </div>
+            /category/{{ $category->slug }}
+        </p>
     </td>
     <td class="px-4 py-3">
         <a href="{{ route('admin.products.index', ['category' => $category->id]) }}" class="font-semibold text-slate-600 hover:text-brand-600">{{ $category->products_count }}</a>

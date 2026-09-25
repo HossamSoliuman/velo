@@ -80,7 +80,7 @@
                                     <label for="order-{{ $product->id }}" class="sr-only">Display order for {{ $product->name }}</label>
                                     <input id="order-{{ $product->id }}" form="product-order" type="number" min="0" max="100000" name="order[{{ $product->id }}]"
                                         value="{{ $category ? $product->pivot->display_order : $product->display_order }}"
-                                        class="w-20 rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:outline-none">
+                                        class="w-16 [appearance:textfield] rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-center text-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none">
                                 </td>
                                 <td class="px-4 py-3">
                                     <div class="flex items-center gap-3">
