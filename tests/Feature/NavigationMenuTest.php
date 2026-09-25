@@ -73,3 +73,15 @@ test('navigation can be read back from a serializing cache store', function () {
     expect($cached->first())->toBeInstanceOf(Category::class)
         ->and($cached->first()->children->first()->name)->toBe('Backpacks');
 });
+
+test('the menu marks the top-level category being browsed as current', function () {
+    $bags = Category::factory()->create(['name' => 'Bags']);
+    $backpacks = Category::factory()->create(['name' => 'Backpacks', 'parent_id' => $bags->id]);
+    $pens = Category::factory()->create(['name' => 'Pens']);
+    $currentLink = fn (Category $category) => '~href="'.preg_quote(route('categories.show', $category), '~').'"[^>]*aria-current="page"[^>]*>'.$category->name.'</a>~';
+
+    $html = $this->get(route('categories.show', $backpacks))->getContent();
+
+    expect($html)->toMatch($currentLink($bags))
+        ->not->toMatch($currentLink($pens));
+});

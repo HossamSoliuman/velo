@@ -24,6 +24,13 @@
             </div>
         </x-admin.card>
 
+        <x-admin.card title="Home page promotion" description="The blue corporate gifting section further down the home page. Leave blank to use the default wording.">
+            <x-admin.input name="promo_title" label="Heading" :value="$settings['promo_title'] ?? ''" maxlength="120" />
+            <div class="mt-6">
+                <x-admin.textarea name="promo_text" label="Text" :value="$settings['promo_text'] ?? ''" rows="3" maxlength="400" />
+            </div>
+        </x-admin.card>
+
         <x-admin.card title="Contact details" description="Shown in the header, footer and on the contact page.">
             <div class="grid gap-6 sm:grid-cols-2">
                 <x-admin.input name="phone" label="Phone" :value="$settings['phone'] ?? ''" />

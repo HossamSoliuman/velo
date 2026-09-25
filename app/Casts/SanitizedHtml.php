@@ -91,6 +91,16 @@ class SanitizedHtml implements CastsAttributes
         return trim($output) === '' ? null : $output;
     }
 
+    /**
+     * The text of the given HTML on one line, e.g. for excerpts and meta descriptions.
+     */
+    public static function plainText(?string $html): string
+    {
+        $text = html_entity_decode(strip_tags(preg_replace('/<[^>]*>/', ' $0', (string) $html)), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        return trim(preg_replace('/\s+/u', ' ', $text));
+    }
+
     private static function cleanChildren(DOMNode $parent): void
     {
         foreach (iterator_to_array($parent->childNodes) as $child) {

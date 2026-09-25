@@ -44,7 +44,7 @@
                     <a href="{{ route('categories.show', $category->slug) }}"
                         class="group flex flex-col items-center rounded-2xl border-t-4 {{ $accents[$loop->index % count($accents)] }} bg-brand-50 px-3 py-6 text-center transition hover:-translate-y-0.5 hover:bg-white hover:shadow-lg">
                         @if ($category->image)
-                            <img src="{{ Storage::disk('public')->url($category->image) }}" alt="" loading="lazy" class="size-16 rounded-full object-cover">
+                            <img src="{{ $category->image_url }}" alt="" loading="lazy" class="size-16 rounded-full object-cover">
                         @else
                             <span class="flex size-16 items-center justify-center rounded-full bg-white text-xl font-extrabold text-brand-500 shadow-sm">
                                 {{ mb_substr($category->name, 0, 1) }}
@@ -71,38 +71,59 @@
         </section>
     @endif
 
-    {{-- Why Velo --}}
+    {{-- Corporate gifting promotion --}}
     <section class="mx-auto max-w-7xl px-4 pt-20 sm:px-6 lg:px-8">
-        <div class="rounded-3xl bg-brand-50 px-6 py-12 sm:px-12">
-            <h2 class="text-center text-3xl font-extrabold text-brand-800">Why choose Velo Printing &amp; Gifting</h2>
-            <div class="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-                @foreach ([
-                    ['Custom Branding', 'Printing, engraving and embroidery with your logo.', 'bg-fan-magenta'],
-                    ['Bulk Orders', 'Reliable supply for events, teams and campaigns.', 'bg-fan-cyan'],
-                    ['Wide Range', 'From diaries and pens to electronics and hampers.', 'bg-fan-lime'],
-                    ['On-Time Delivery', 'Planned timelines so your gifts arrive when needed.', 'bg-fan-purple'],
-                ] as [$heading, $text, $dot])
-                    <div class="text-center">
-                        <span class="mx-auto block h-1.5 w-12 rounded-full {{ $dot }}"></span>
-                        <h3 class="mt-4 font-bold text-brand-800">{{ $heading }}</h3>
-                        <p class="mt-2 text-sm text-slate-600">{{ $text }}</p>
+        <div class="relative overflow-hidden rounded-3xl bg-brand-500 text-white">
+            <x-logo-mark class="pointer-events-none absolute -bottom-36 -left-36 size-80 text-white/10 opacity-40" />
+            <div class="relative grid gap-10 px-6 py-12 sm:px-12 lg:grid-cols-2 lg:items-center lg:py-16">
+                <div>
+                    <p class="text-sm font-bold tracking-widest text-fan-yellow uppercase">Corporate gifting</p>
+                    <h2 class="mt-2 text-3xl font-extrabold text-balance sm:text-4xl">{{ SiteSetting::value('promo_title', 'Corporate gifting, handled end to end') }}</h2>
+                    <p class="mt-4 max-w-xl text-white/85">{{ SiteSetting::value('promo_text', 'From welcome kits for new joiners to festive hampers for clients, we source, brand and pack gifts that fit your budget and timeline.') }}</p>
+                    <div class="mt-8 flex flex-wrap gap-4">
+                        <a href="{{ route('e-catalog') }}" class="rounded-full bg-white px-6 py-3 text-sm font-bold text-brand-700 shadow-lg transition hover:bg-brand-50">View E-Catalog</a>
+                        <a href="{{ route('contact') }}" class="rounded-full px-6 py-3 text-sm font-bold text-white ring-2 ring-white/60 transition hover:bg-white/10">Request a Quote</a>
                     </div>
-                @endforeach
+                </div>
+                <ul class="grid grid-cols-2 gap-3 text-sm font-semibold sm:gap-4">
+                    @foreach ([
+                        ['Employee welcome kits', 'bg-fan-magenta'],
+                        ['Festive hampers', 'bg-fan-yellow'],
+                        ['Client appreciation', 'bg-fan-cyan'],
+                        ['Events & conferences', 'bg-fan-lime'],
+                        ['Awards & recognition', 'bg-fan-purple'],
+                        ['Dealer & channel meets', 'bg-fan-sky'],
+                    ] as [$occasion, $dot])
+                        <li class="flex items-center gap-3 rounded-2xl bg-white/10 px-4 py-4 ring-1 ring-white/15 sm:px-5">
+                            <span class="size-2.5 shrink-0 rounded-full {{ $dot }}"></span>
+                            {{ $occasion }}
+                        </li>
+                    @endforeach
+                </ul>
             </div>
         </div>
     </section>
 
-    {{-- Call to action --}}
-    <section class="mx-auto max-w-7xl px-4 pt-20 sm:px-6 lg:px-8">
-        <div class="relative overflow-hidden rounded-3xl bg-brand-700 px-6 py-12 text-white sm:px-12">
-            <div class="absolute inset-x-0 top-0 h-1.5 bg-fan-gradient"></div>
-            <div class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+    {{-- New arrivals --}}
+    @if ($newArrivals->isNotEmpty())
+        <section class="mx-auto max-w-7xl px-4 pt-20 sm:px-6 lg:px-8">
+            <div class="flex items-end justify-between gap-4">
                 <div>
-                    <h2 class="text-2xl font-extrabold sm:text-3xl">Planning corporate gifts?</h2>
-                    <p class="mt-2 text-white/80">Tell us your quantity and budget — we'll send a tailored quotation.</p>
+                    <p class="text-sm font-bold tracking-widest text-fan-magenta uppercase">Just added</p>
+                    <h2 class="mt-2 text-3xl font-extrabold text-brand-800">New Arrivals</h2>
                 </div>
-                <a href="{{ route('contact') }}" class="shrink-0 rounded-full bg-fan-magenta px-7 py-3.5 text-center text-sm font-bold shadow-lg transition hover:brightness-110">Send an Enquiry</a>
+                <a href="{{ route('price-range', ['sort' => 'newest']) }}" class="hidden text-sm font-semibold text-brand-600 hover:text-brand-800 sm:block">See what's new →</a>
             </div>
-        </div>
-    </section>
+
+            <div class="mt-8 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
+                @foreach ($newArrivals as $product)
+                    <x-product-card :product="$product" />
+                @endforeach
+            </div>
+        </section>
+    @endif
+
+    <x-why-velo class="pt-20" />
+
+    <x-enquiry-cta class="pt-20" />
 </x-layouts.app>

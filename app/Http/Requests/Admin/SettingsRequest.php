@@ -41,6 +41,8 @@ class SettingsRequest extends FormRequest
             'hero_title' => ['required', 'string', 'max:120'],
             'hero_highlight' => ['nullable', 'string', 'max:60'],
             'hero_subtitle' => ['nullable', 'string', 'max:300'],
+            'promo_title' => ['nullable', 'string', 'max:120'],
+            'promo_text' => ['nullable', 'string', 'max:400'],
             'phone' => ['nullable', 'string', 'max:50'],
             'whatsapp' => ['nullable', 'string', 'max:50'],
             'email' => ['nullable', 'email', 'max:255'],

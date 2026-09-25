@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Casts\SanitizedHtml;
+use App\Enums\ProductSort;
 use App\Models\Concerns\HasSeoFields;
 use App\Models\Concerns\HasSlug;
 use App\Models\Concerns\HasSlugRedirects;
@@ -50,6 +51,16 @@ class Product extends Model
             .Number::format((float) $this->price, maxPrecision: 2, locale: 'en_IN'));
     }
 
+    /**
+     * The description as plain text, for excerpts and meta descriptions.
+     *
+     * @return Attribute<string, never>
+     */
+    protected function plainDescription(): Attribute
+    {
+        return Attribute::get(fn (): string => SanitizedHtml::plainText($this->description));
+    }
+
     public function getRouteKeyName(): string
     {
         return 'slug';
@@ -95,5 +106,54 @@ class Product extends Model
     protected function ordered(Builder $query): void
     {
         $query->orderBy('display_order')->latest();
+    }
+
+    /**
+     * Products whose name or SKU contains every word of the search text.
+     */
+    #[Scope]
+    protected function search(Builder $query, string $text): void
+    {
+        foreach (array_slice(preg_split('/\s+/', trim($text), -1, PREG_SPLIT_NO_EMPTY), 0, 5) as $word) {
+            $query->where(fn (Builder $query) => $query
+                ->where('name', 'like', "%{$word}%")
+                ->orWhere('sku', 'like', "%{$word}%"));
+        }
+    }
+
+    /**
+     * Products priced from the minimum up to, but not including, the maximum.
+     */
+    #[Scope]
+    protected function priceBetween(Builder $query, ?int $min, ?int $max): void
+    {
+        $query->when($min !== null, fn (Builder $query) => $query->where('price', '>=', $min))
+            ->when($max !== null, fn (Builder $query) => $query->where('price', '<', $max));
+    }
+
+    /**
+     * Products assigned to any of the given categories.
+     *
+     * @param  list<int>  $categoryIds
+     */
+    #[Scope]
+    protected function inCategories(Builder $query, array $categoryIds): void
+    {
+        $query->whereHas('categories', fn (Builder $query) => $query->whereKey($categoryIds));
+    }
+
+    #[Scope]
+    protected function sortedBy(Builder $query, ProductSort $sort): void
+    {
+        match ($sort) {
+            ProductSort::Recommended => $query->ordered(),
+            ProductSort::Newest => $query->latest(),
+            ProductSort::PriceLowToHigh => $query->orderBy('price')->orderBy('name'),
+            ProductSort::PriceHighToLow => $query->orderByDesc('price')->orderBy('name'),
+            ProductSort::NameAToZ => $query->orderBy('name'),
+        };
+
+        // Rows that tie keep the same order from page to page.
+        $query->orderByDesc('id');
     }
 }

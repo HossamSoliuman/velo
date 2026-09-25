@@ -1,44 +1,32 @@
 <?php
 
-<<<<<<< Updated upstream
-=======
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ECatalogController;
 use App\Http\Controllers\EnquiryController;
->>>>>>> Stashed changes
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\PriceRangeController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SearchController;
 use App\Models\Category;
 use App\Models\Product;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
 
-// Phase 2 replaces these placeholders with the real catalogue and content pages.
-Route::view('/categories', 'coming-soon', ['title' => 'All Categories'])->name('categories.index');
-Route::get('/category/{slug}', function (string $slug) {
-    if ($category = Category::findByPreviousSlug($slug)) {
-        return redirect()->route('categories.show', $category->slug, 301);
-    }
+Route::get('/categories', [CategoryController::class, 'index'])->name('categories.index');
 
-    return view('coming-soon', ['title' => str($slug)->headline()]);
-})->name('categories.show');
-Route::get('/product/{slug}', function (string $slug) {
-    if ($product = Product::findByPreviousSlug($slug)) {
-        return redirect()->route('products.show', $product->slug, 301);
-    }
+// An address that no longer matches a slug permanently redirects if the record used that slug before.
+Route::get('/category/{category}', [CategoryController::class, 'show'])
+    ->name('categories.show')
+    ->missing(fn (Request $request) => redirect()->route(
+        'categories.show',
+        Category::findByPreviousSlug((string) $request->route('category')) ?? abort(404),
+        301,
+    ));
 
-<<<<<<< Updated upstream
-    return view('coming-soon', ['title' => str($slug)->headline()]);
-})->name('products.show');
-Route::view('/price-range', 'coming-soon', ['title' => 'Shop by Price'])->name('price-range');
-Route::view('/search', 'coming-soon', ['title' => 'Search'])->name('search');
-Route::view('/about-us', 'coming-soon', ['title' => 'About Us'])->name('about');
-Route::view('/e-catalog', 'coming-soon', ['title' => 'E-Catalog'])->name('e-catalog');
-Route::view('/contact', 'coming-soon', ['title' => 'Contact Us'])->name('contact');
-Route::view('/privacy-policy', 'coming-soon', ['title' => 'Privacy Policy'])->name('privacy');
-Route::view('/terms-and-conditions', 'coming-soon', ['title' => 'Terms and Conditions'])->name('terms');
-=======
 Route::get('/product/{product}', [ProductController::class, 'show'])
     ->name('products.show')
     ->missing(fn (Request $request) => redirect()->route(
@@ -59,4 +47,3 @@ Route::get('/e-catalog/download', [ECatalogController::class, 'download'])->name
 
 Route::get('/contact', [ContactController::class, 'show'])->name('contact');
 Route::post('/enquiries', [EnquiryController::class, 'store'])->middleware('throttle:enquiries')->name('enquiries.store');
->>>>>>> Stashed changes

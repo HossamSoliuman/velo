@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\View;
-use Illuminate\Support\Number;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 
@@ -66,29 +65,8 @@ class AppServiceProvider extends ServiceProvider
         View::composer(['partials.site-header', 'partials.site-footer'], function ($view) {
             $view->with([
                 'navigationCategories' => Category::navigation(),
-                'priceRanges' => $this->priceRanges(),
+                'priceRanges' => SiteSetting::priceRanges(),
             ]);
         });
-    }
-
-    /**
-     * Price ranges configured in site settings, with display labels.
-     *
-     * @return list<array{min: int, max: int|null, label: string}>
-     */
-    private function priceRanges(): array
-    {
-        $symbol = SiteSetting::value('currency_symbol', '₹');
-        $ranges = json_decode((string) SiteSetting::value('price_ranges', '[]'), true) ?: [];
-
-        return array_map(fn (array $range) => [
-            'min' => (int) $range['min'],
-            'max' => $range['max'] === null ? null : (int) $range['max'],
-            'label' => match (true) {
-                $range['max'] === null => 'Above '.$symbol.Number::format($range['min'], locale: 'en_IN'),
-                (int) $range['min'] === 0 => 'Under '.$symbol.Number::format($range['max'], locale: 'en_IN'),
-                default => $symbol.Number::format($range['min'], locale: 'en_IN').' – '.$symbol.Number::format($range['max'], locale: 'en_IN'),
-            },
-        ], $ranges);
     }
 }

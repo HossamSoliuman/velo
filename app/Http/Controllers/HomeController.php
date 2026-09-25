@@ -9,7 +9,7 @@ use Illuminate\View\View;
 class HomeController extends Controller
 {
     /**
-     * Show the homepage with featured categories and products.
+     * Show the homepage with popular categories, featured products and new arrivals.
      */
     public function __invoke(): View
     {
@@ -21,6 +21,13 @@ class HomeController extends Controller
                 ->ordered()
                 ->with('primaryImage')
                 ->limit(8)
+                ->get(),
+            'newArrivals' => Product::query()
+                ->active()
+                ->latest()
+                ->latest('id')
+                ->with('primaryImage')
+                ->limit(4)
                 ->get(),
         ]);
     }
