@@ -35,6 +35,10 @@ class DatabaseSeeder extends Seeder
             CatalogSeeder::class,
         ]);
 
+        if (! app()->isProduction()) {
+            $this->call(DemoEnquirySeeder::class);
+        }
+
         // Model events are muted while seeding, so the observers never clear these caches.
         Cache::forget(SiteSetting::CACHE_KEY);
         Cache::forget(Category::NAVIGATION_CACHE_KEY);
