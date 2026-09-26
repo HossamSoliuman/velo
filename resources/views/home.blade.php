@@ -24,25 +24,27 @@
     </x-slot:head>
 
     {{-- Hero --}}
-    <section class="relative overflow-hidden bg-brand-500 text-white">
-        <x-logo-mark class="pointer-events-none absolute -right-24 -bottom-32 size-[34rem] text-white/10 sm:-right-10 lg:right-10 lg:-bottom-20" />
-        <div class="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
-            <p class="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold tracking-wider uppercase ring-1 ring-white/20">
-                <span class="size-2 rounded-full bg-fan-yellow"></span> Corporate gifting &amp; printing
-            </p>
-            <h1 class="mt-6 max-w-2xl text-4xl leading-tight font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-                {{ SiteSetting::value('hero_title', 'Gifts that carry your brand') }}
-                @if ($heroHighlight = SiteSetting::value('hero_highlight'))
-                    <span class="text-fan-yellow">{{ $heroHighlight }}</span>
+    <section class="overflow-hidden bg-brand-500 text-white">
+        <div class="mx-auto grid max-w-7xl items-center gap-14 px-4 py-14 sm:px-6 lg:grid-cols-2 lg:gap-10 lg:px-8 lg:py-16">
+            <div>
+                <h1 class="text-4xl leading-[1.05] font-extrabold tracking-tight text-balance sm:text-5xl lg:text-[3.75rem]">
+                    {{ SiteSetting::value('hero_title', 'Gifts that carry your brand') }}
+                    @if ($heroHighlight = SiteSetting::value('hero_highlight'))
+                        <span class="text-fan-yellow">{{ $heroHighlight }}</span>
+                    @endif
+                </h1>
+                @if ($heroSubtitle = SiteSetting::value('hero_subtitle'))
+                    <p class="mt-6 max-w-lg text-lg leading-relaxed text-white/85">{{ $heroSubtitle }}</p>
                 @endif
-            </h1>
-            @if ($heroSubtitle = SiteSetting::value('hero_subtitle'))
-                <p class="mt-6 max-w-xl text-lg text-white/85">{{ $heroSubtitle }}</p>
-            @endif
-            <div class="mt-10 flex flex-wrap gap-4">
-                <a href="{{ route('categories.index') }}" class="rounded-full bg-white px-7 py-3.5 text-sm font-bold text-brand-700 shadow-lg transition hover:bg-brand-50">Explore Products</a>
-                <a href="{{ route('contact') }}" class="rounded-full bg-fan-magenta px-7 py-3.5 text-sm font-bold text-white shadow-lg transition hover:brightness-110">Request a Quote</a>
+                <div class="mt-10 flex flex-wrap items-center gap-x-8 gap-y-4">
+                    <a href="{{ route('contact') }}" class="rounded-full bg-fan-magenta px-7 py-3.5 text-sm font-bold text-white transition hover:brightness-110">Request a Quote</a>
+                    <a href="{{ route('categories.index') }}" class="group inline-flex items-center gap-2 py-3.5 text-sm font-bold text-white">
+                        Browse Products <span aria-hidden="true" class="transition group-hover:translate-x-1">→</span>
+                    </a>
+                </div>
             </div>
+
+            <x-imprint-preview />
         </div>
     </section>
 
