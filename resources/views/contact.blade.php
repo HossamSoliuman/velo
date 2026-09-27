@@ -27,21 +27,21 @@
         Tell us what you need — products, quantities, branding and timelines — and we'll get back to you with options and a quotation.
     </x-page-header>
 
-    <section class="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 lg:grid-cols-5 lg:px-8">
+    <section class="mx-auto grid max-w-7xl gap-8 px-4 py-8 sm:gap-10 sm:px-6 sm:py-12 lg:grid-cols-5 lg:px-8">
         <div class="lg:col-span-2">
-            <ul class="space-y-4">
+            <ul class="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-1">
                 @foreach ($contactMethods as [$heading, $value, $href, $accent, $icon])
-                    <li class="flex gap-4 rounded-2xl bg-brand-50 p-5">
-                        <span class="relative flex size-11 shrink-0 items-center justify-center rounded-full bg-white text-brand-600 shadow-sm">
+                    <li class="flex items-center gap-4 rounded-2xl bg-brand-50 p-4 ring-1 ring-brand-100 sm:p-5">
+                        <span class="relative flex size-10 shrink-0 items-center justify-center rounded-full bg-white text-brand-600 shadow-sm sm:size-11">
                             <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke-width="1.6" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $icon }}"/></svg>
                             <span class="absolute -top-0.5 -right-0.5 size-3 rounded-full ring-2 ring-white {{ $accent }}"></span>
                         </span>
                         <div class="min-w-0">
-                            <h2 class="text-xs font-bold tracking-widest text-slate-500 uppercase">{{ $heading }}</h2>
+                            <h2 class="text-[0.7rem] font-bold tracking-widest text-slate-500 uppercase sm:text-xs">{{ $heading }}</h2>
                             @if ($href)
-                                <a href="{{ $href }}" @if (str_starts_with($href, 'https://')) target="_blank" rel="noopener" @endif class="mt-1 block font-semibold break-words text-brand-800 hover:text-brand-600">{{ $value }}</a>
+                                <a href="{{ $href }}" @if (str_starts_with($href, 'https://')) target="_blank" rel="noopener" @endif class="mt-0.5 block text-sm font-semibold break-words text-brand-800 hover:text-brand-600 sm:mt-1 sm:text-base">{{ $value }}</a>
                             @else
-                                <p class="mt-1 font-semibold whitespace-pre-line text-brand-800">{{ $value }}</p>
+                                <p class="mt-0.5 text-sm font-semibold whitespace-pre-line text-brand-800 sm:mt-1 sm:text-base">{{ $value }}</p>
                             @endif
                         </div>
                     </li>
@@ -71,18 +71,18 @@
         <section class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="overflow-hidden rounded-3xl ring-1 ring-brand-100">
                 <iframe src="{{ $mapUrl }}" title="Map showing our location" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen
-                    class="block h-80 w-full border-0 sm:h-96"></iframe>
+                    class="block h-64 w-full border-0 sm:h-96"></iframe>
             </div>
         </section>
     @elseif ($address)
         <section class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col items-start gap-4 rounded-3xl bg-brand-500 px-6 py-8 text-white sm:flex-row sm:items-center sm:justify-between sm:px-10">
+            <div class="flex flex-col items-start gap-4 rounded-3xl bg-brand-500 px-5 py-7 text-white sm:flex-row sm:items-center sm:justify-between sm:px-10 sm:py-8">
                 <div>
                     <h2 class="text-xl font-extrabold">Find us</h2>
-                    <p class="mt-1 text-white/85">{{ $address }}</p>
+                    <p class="mt-1 text-sm text-white/85 sm:text-base">{{ $address }}</p>
                 </div>
                 <a href="https://www.google.com/maps/search/?api=1&amp;query={{ urlencode($address) }}" target="_blank" rel="noopener"
-                    class="shrink-0 rounded-full bg-white px-6 py-3 text-sm font-bold text-brand-700 hover:bg-brand-50">Get directions</a>
+                    class="w-full shrink-0 rounded-full bg-white px-6 py-3 text-center text-sm font-bold text-brand-700 hover:bg-brand-50 sm:w-auto">Get directions</a>
             </div>
         </section>
     @endif

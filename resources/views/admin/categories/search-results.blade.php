@@ -10,7 +10,7 @@
 @else
     <div class="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
         <div class="overflow-x-auto">
-            <table class="min-w-full text-sm">
+            <table class="data-table min-w-full text-sm">
                 <thead class="bg-slate-50 text-left text-xs font-bold tracking-wide text-slate-500 uppercase">
                     <tr>
                         <th scope="col" class="px-4 py-3">Category</th>
@@ -21,11 +21,11 @@
                         <th scope="col" class="px-4 py-3"><span class="sr-only">Actions</span></th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-100">
+                <tbody class="divide-slate-100 md:divide-y">
                     @foreach ($categories as $category)
                         @php($url = $category->parent ? route('admin.categories.edit', $category) : route('admin.categories.show', $category))
                         <tr>
-                            <td class="px-4 py-3">
+                            <td class="md:px-4 md:py-3" data-primary>
                                 <div class="flex items-center gap-3">
                                     <x-admin.thumbnail :url="$category->image_url" class="size-10" />
                                     <div class="min-w-0">
@@ -34,7 +34,7 @@
                                     </div>
                                 </div>
                             </td>
-                            <td class="px-4 py-3 text-xs whitespace-nowrap">
+                            <td class="text-xs md:px-4 md:py-3 md:whitespace-nowrap" data-label="Found in">
                                 @if ($category->parent)
                                     <a href="{{ route('admin.categories.show', $category->parent) }}" class="font-semibold text-brand-600 hover:text-brand-800">{{ $category->parent->name }}</a>
                                     <span class="text-slate-500">› sub-category</span>
@@ -45,19 +45,19 @@
                                     @endif
                                 @endif
                             </td>
-                            <td class="px-4 py-3">
+                            <td class="md:px-4 md:py-3" data-label="Products">
                                 <a href="{{ route('admin.products.index', ['category' => $category->id]) }}" class="font-semibold text-slate-600 hover:text-brand-600">{{ $category->products_count }}</a>
                             </td>
-                            <td class="px-4 py-3">
+                            <td class="md:px-4 md:py-3" data-label="Website">
                                 <x-admin.status-button :action="route('admin.categories.status.update', $category)" field="is_active" :value="$category->is_active"
                                     :label="($category->is_active ? 'Hide ' : 'Show ').$category->name.' on the website'" />
                             </td>
-                            <td class="px-4 py-3">
+                            <td class="md:px-4 md:py-3" data-label="Menu">
                                 <x-admin.status-button :action="route('admin.categories.status.update', $category)" field="show_in_menu" :value="$category->show_in_menu"
                                     on="In menu" off="Not in menu" :label="($category->show_in_menu ? 'Remove ' : 'Add ').$category->name.($category->show_in_menu ? ' from' : ' to').' the menu'" />
                             </td>
-                            <td class="px-4 py-3 text-right">
-                                <a href="{{ route('admin.categories.edit', $category) }}" class="font-semibold text-brand-600 hover:text-brand-800">Edit</a>
+                            <td class="md:px-4 md:py-3 md:text-right" data-actions>
+                                <a href="{{ route('admin.categories.edit', $category) }}" class="font-semibold text-brand-600 hover:text-brand-800">Edit<span class="sr-only"> {{ $category->name }}</span></a>
                             </td>
                         </tr>
                     @endforeach

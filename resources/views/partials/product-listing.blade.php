@@ -16,13 +16,13 @@
     ]));
 @endphp
 
-<div x-data="{ filtersOpen: false }" class="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:flex lg:gap-10 lg:px-8">
+<div x-data="{ filtersOpen: false }" class="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-10 lg:flex lg:gap-10 lg:px-8">
     <aside class="hidden w-60 shrink-0 lg:block" aria-label="Product filters">
         @include('partials.listing-filters')
     </aside>
 
     <div class="min-w-0 flex-1">
-        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-brand-100 pb-4">
+        <div class="flex flex-col gap-3 border-b border-brand-100 pb-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
             <p class="text-sm text-slate-600">
                 @if ($products->total() > 0)
                     Showing <strong class="text-ink">{{ $products->firstItem() }}–{{ $products->lastItem() }}</strong>
@@ -32,9 +32,10 @@
                 @endif
             </p>
 
-            <div class="flex items-center gap-2">
+            <div class="grid grid-cols-[auto_1fr] items-center gap-2 sm:flex">
                 <button type="button" x-on:click="filtersOpen = ! filtersOpen" :aria-expanded="filtersOpen" aria-controls="mobile-filters"
-                    class="inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-bold text-brand-700 ring-1 ring-brand-200 hover:bg-brand-50 lg:hidden">
+                    class="inline-flex items-center justify-center gap-1.5 rounded-full px-4 py-2 text-sm font-bold text-brand-700 ring-1 ring-brand-200 hover:bg-brand-50 lg:hidden"
+                    :class="filtersOpen && 'bg-brand-50'">
                     <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" d="M4 6h16M7 12h10M10 18h4"/></svg>
                     Filters
                     @if ($activeFilters)
@@ -42,15 +43,15 @@
                     @endif
                 </button>
 
-                <form method="GET" action="{{ request()->url() }}" class="flex items-center gap-2">
+                <form method="GET" action="{{ request()->url() }}" class="flex min-w-0 items-center gap-2">
                     @foreach (Arr::only(request()->query(), ['q', 'category', 'min', 'max']) as $key => $value)
                         @if (is_string($value))
                             <input type="hidden" name="{{ $key }}" value="{{ $value }}">
                         @endif
                     @endforeach
                     <label for="sort" class="hidden text-sm text-slate-500 sm:block">Sort by</label>
-                    <select id="sort" name="sort" x-data x-on:change="$el.form.submit()"
-                        class="rounded-full border border-brand-200 bg-white py-2 pr-8 pl-4 text-sm font-semibold text-brand-800 focus:border-brand-400 focus:ring-2 focus:ring-brand-500/20 focus:outline-none">
+                    <select id="sort" name="sort" x-data x-on:change="$el.form.submit()" aria-label="Sort by"
+                        class="w-full min-w-0 rounded-full border border-brand-200 bg-white py-1.5 pr-8 pl-4 text-base font-semibold text-brand-800 focus:border-brand-400 focus:ring-2 focus:ring-brand-500/20 focus:outline-none sm:w-auto sm:py-2 sm:text-sm">
                         @foreach ($sortOptions as $option)
                             <option value="{{ $option->value }}" @selected($filters['sort'] === $option)>{{ $option->label() }}</option>
                         @endforeach
@@ -61,7 +62,7 @@
         </div>
 
         <div id="mobile-filters" x-show="filtersOpen" x-collapse x-cloak class="lg:hidden">
-            <div class="border-b border-brand-100 py-6">
+            <div class="mt-4 rounded-2xl bg-brand-50/60 p-4 ring-1 ring-brand-100 sm:p-5">
                 @include('partials.listing-filters')
             </div>
         </div>
@@ -83,7 +84,7 @@
 
         @if ($products->isNotEmpty())
             <h2 class="sr-only">Products</h2>
-            <div class="mt-6 grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3">
+            <div class="mt-5 grid grid-cols-2 gap-3 sm:mt-6 sm:gap-6 md:grid-cols-3 lg:grid-cols-2 xl:grid-cols-3">
                 @foreach ($products as $product)
                     <x-product-card :product="$product" />
                 @endforeach
@@ -91,7 +92,7 @@
 
             {{ $products->onEachSide(1)->links('partials.pagination') }}
         @else
-            <div class="mt-8 rounded-3xl border-2 border-dashed border-brand-100 px-6 py-16 text-center">
+            <div class="mt-6 rounded-3xl border-2 border-dashed border-brand-100 px-5 py-12 text-center sm:mt-8 sm:px-6 sm:py-16">
                 <x-logo-mark class="mx-auto size-14 text-brand-300" />
                 <h2 class="mt-5 text-xl font-extrabold text-brand-800">{{ $emptyTitle ?? 'No products match your selection' }}</h2>
                 <p class="mx-auto mt-2 max-w-md text-sm text-slate-600">

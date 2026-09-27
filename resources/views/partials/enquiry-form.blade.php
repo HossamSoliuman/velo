@@ -12,7 +12,7 @@
     $sentMessage = (string) session('enquiry_sent', '');
     $formError = $errors->first('enquiry') ?: $errors->first('product_id');
 
-    $input = 'block w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-ink placeholder:text-slate-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:outline-none aria-invalid:border-red-400 aria-invalid:focus:border-red-500';
+    $input = 'block w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-ink sm:text-sm placeholder:text-slate-400 focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:outline-none aria-invalid:border-red-400 aria-invalid:focus:border-red-500';
     $label = 'block text-sm font-semibold text-slate-700';
     $validation = fn (string $field): string => sprintf(
         'aria-describedby="enquiry-%1$s-error" aria-invalid="%2$s" x-bind:aria-invalid="errors.%1$s ? \'true\' : \'false\'"',
@@ -23,7 +23,7 @@
 
 <div x-data="enquiryForm({{ Js::from((object) $errors->toArray()) }}, {{ Js::from($formError) }}, {{ Js::from($sentMessage) }})"
     @if ($inModal) x-on:open-enquiry.window="if (sent) startAgain()" @endif
-    class="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-brand-100 sm:p-8">
+    class="rounded-3xl bg-white p-5 shadow-sm ring-1 ring-brand-100 sm:p-8">
 
     {{-- Thank-you note --}}
     <div x-show="sent" x-ref="thanks" tabindex="-1" role="status" class="py-6 text-center focus:outline-none" @if ($sentMessage === '') style="display: none" @endif>
@@ -40,16 +40,16 @@
     </div>
 
     <div x-show="! sent" @if ($sentMessage !== '') style="display: none" @endif>
-        <h2 id="enquiry-heading" class="text-2xl font-extrabold text-brand-800 @if ($inModal) pr-10 @endif">{{ $product ? 'Enquire about this product' : 'Send us an enquiry' }}</h2>
+        <h2 id="enquiry-heading" class="text-xl font-extrabold text-brand-800 sm:text-2xl @if ($inModal) pr-10 @endif">{{ $product ? 'Enquire about this product' : 'Send us an enquiry' }}</h2>
         <p class="mt-1 text-sm text-slate-600">Fields marked <span class="text-fan-magenta">*</span> are required.</p>
 
         @if ($product)
-            <div class="mt-6 flex items-center gap-4 rounded-2xl bg-brand-50 p-4 ring-1 ring-brand-100">
-                <div class="size-16 shrink-0 overflow-hidden rounded-xl bg-white ring-1 ring-brand-100">
+            <div class="mt-5 flex items-center gap-3 rounded-2xl bg-brand-50 p-3 ring-1 ring-brand-100 sm:mt-6 sm:gap-4 sm:p-4">
+                <div class="size-14 shrink-0 overflow-hidden rounded-xl bg-white ring-1 ring-brand-100 sm:size-16">
                     @if ($product->primaryImage)
                         <img src="{{ $product->primaryImage->url }}" alt="" class="size-full object-cover">
                     @else
-                        <x-logo-mark class="m-auto mt-3 size-10 text-brand-300 opacity-50" />
+                        <x-logo-mark class="m-auto mt-2 size-10 text-brand-300 opacity-50 sm:mt-3" />
                     @endif
                 </div>
                 <div class="min-w-0 flex-1">
@@ -71,7 +71,7 @@
         <div x-show="formError" x-text="formError" role="alert" class="mt-6 rounded-xl border-l-4 border-red-500 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700"
             @if ($formError === '') style="display: none" @endif>{{ $formError }}</div>
 
-        <form method="POST" action="{{ route('enquiries.store') }}" x-on:submit.prevent="submit" class="mt-6 grid gap-5 sm:grid-cols-2">
+        <form method="POST" action="{{ route('enquiries.store') }}" x-on:submit.prevent="submit" class="mt-5 grid gap-4 sm:mt-6 sm:grid-cols-2 sm:gap-5">
             @csrf
             @if ($product)
                 <input type="hidden" name="product_id" value="{{ $product->id }}">

@@ -13,7 +13,7 @@
     $currentTopLevelId = $routeCategory instanceof Category ? ($routeCategory->parent_id ?? $routeCategory->id) : null;
 @endphp
 
-<header x-data="{ drawer: false }" @keydown.escape.window="drawer = false" class="relative z-40">
+<header x-data="{ drawer: false, search: false }" @keydown.escape.window="drawer = false; search = false" class="relative z-40">
     {{-- Contact strip --}}
     <div class="bg-brand-900 text-xs text-white/80">
         <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-2 sm:px-6 lg:px-8">
@@ -37,13 +37,13 @@
 
     {{-- Logo, search and call-to-action --}}
     <div class="border-b border-brand-100 bg-white">
-        <div class="mx-auto flex max-w-7xl items-center gap-4 px-4 py-3 sm:px-6 lg:gap-8 lg:px-8 lg:py-4">
+        <div class="mx-auto flex max-w-7xl items-center gap-2 px-4 py-3 sm:gap-4 sm:px-6 lg:gap-8 lg:px-8 lg:py-4">
             <button type="button" @click="drawer = true" class="-ml-2 rounded-md p-2 text-brand-700 hover:bg-brand-50 lg:hidden" aria-label="Open menu">
                 <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
             </button>
 
             <a href="{{ route('home') }}" class="shrink-0 text-brand-500" aria-label="{{ SiteSetting::value('site_name') }} home">
-                <x-logo class="text-[2.6rem] lg:text-5xl" />
+                <x-logo class="text-[2.3rem] sm:text-[2.6rem] lg:text-5xl" />
             </a>
 
             <form action="{{ route('search') }}" method="GET" role="search" class="ml-auto hidden max-w-xl flex-1 md:block">
@@ -57,9 +57,28 @@
                 </div>
             </form>
 
-            <a href="{{ route('contact') }}" class="ml-auto shrink-0 rounded-full bg-fan-magenta px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:brightness-110 md:ml-0 lg:px-6">
+            <button type="button" @click="search = ! search; search && $nextTick(() => $refs.mobileSearch.focus())" :aria-expanded="search" aria-controls="mobile-search"
+                class="ml-auto shrink-0 rounded-full p-2.5 text-brand-700 transition hover:bg-brand-50 md:hidden" :class="search && 'bg-brand-50'" aria-label="Search products">
+                <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" d="m21 21-4.35-4.35M17 10.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z"/></svg>
+            </button>
+
+            <a href="{{ route('contact') }}" class="shrink-0 rounded-full bg-fan-magenta px-3.5 py-2.5 text-[0.8rem] font-bold text-white shadow-sm transition hover:brightness-110 sm:px-4 sm:text-sm lg:px-6">
                 Get a Quote
             </a>
+        </div>
+
+        {{-- Phones: search opens under the logo bar. --}}
+        <div id="mobile-search" x-show="search" x-collapse x-cloak class="md:hidden">
+            <form action="{{ route('search') }}" method="GET" role="search" class="px-4 pb-3 sm:px-6">
+                <label for="mobile-search-input" class="sr-only">Search products by name or SKU</label>
+                <div class="flex overflow-hidden rounded-full border-2 border-brand-100 bg-brand-50/60 focus-within:border-brand-400">
+                    <input x-ref="mobileSearch" id="mobile-search-input" type="search" name="q" value="{{ $searchQuery }}" placeholder="Search products or SKU…"
+                        class="w-full min-w-0 bg-transparent px-4 py-2 text-base placeholder:text-slate-400 focus:outline-none">
+                    <button type="submit" class="shrink-0 bg-brand-500 px-4 text-white transition hover:bg-brand-600" aria-label="Search">
+                        <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" d="m21 21-4.35-4.35M17 10.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0Z"/></svg>
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 
@@ -162,7 +181,7 @@
             <form action="{{ route('search') }}" method="GET" role="search" class="p-4">
                 <label for="drawer-search" class="sr-only">Search products by name or SKU</label>
                 <input id="drawer-search" type="search" name="q" value="{{ $searchQuery }}" placeholder="Search products or SKU…"
-                    class="w-full rounded-full border-2 border-brand-100 bg-brand-50/60 px-4 py-2.5 text-sm focus:border-brand-400 focus:outline-none">
+                    class="w-full rounded-full border-2 border-brand-100 bg-brand-50/60 px-4 py-2.5 text-base focus:border-brand-400 focus:outline-none sm:text-sm">
             </form>
 
             <nav class="flex-1 px-2 pb-6 text-sm font-semibold text-slate-800" aria-label="Mobile">

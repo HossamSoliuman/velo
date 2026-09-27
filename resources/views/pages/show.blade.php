@@ -12,13 +12,13 @@
         @endif
     </x-page-header>
 
-    <article class="mx-auto max-w-3xl px-4 py-12 sm:px-6 lg:py-16">
+    <article class="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-12 lg:py-16">
         <div class="rich-text sm:text-lg">
             {!! $page->content !!}
         </div>
 
         @if ($isPolicy)
-            <p class="mt-12 border-t border-brand-100 pt-6 text-sm text-slate-600">
+            <p class="mt-10 border-t border-brand-100 pt-6 text-sm text-slate-600 sm:mt-12">
                 Questions about this page? <a href="{{ route('contact') }}" class="font-semibold text-brand-600 hover:text-brand-800">Contact us</a>.
             </p>
         @endif
@@ -26,6 +26,6 @@
 
     @unless ($isPolicy)
         <x-why-velo />
-        <x-enquiry-cta class="pt-16" />
+        <x-enquiry-cta class="pt-12 sm:pt-16" />
     @endunless
 </x-layouts.app>

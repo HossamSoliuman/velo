@@ -42,8 +42,8 @@
                     @endforeach
                 </dl>
 
-                <div class="flex flex-wrap gap-3 bg-slate-50/70 px-5 py-4 sm:px-6">
-                    <x-admin.button :href="$contactLinks[0][2]">Reply by email</x-admin.button>
+                <div class="grid grid-cols-2 gap-3 bg-slate-50/70 px-5 py-4 sm:flex sm:flex-wrap sm:px-6">
+                    <x-admin.button :href="$contactLinks[0][2]" class="col-span-2">Reply by email</x-admin.button>
                     <x-admin.button :href="$contactLinks[1][2]" variant="secondary">Call</x-admin.button>
                     @if (strlen($mobileDigits) >= 10)
                         <x-admin.button :href="'https://wa.me/'.(strlen($mobileDigits) === 10 ? '91'.$mobileDigits : $mobileDigits)" variant="secondary" target="_blank" rel="noopener">WhatsApp</x-admin.button>

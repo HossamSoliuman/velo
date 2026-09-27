@@ -8,20 +8,24 @@
         Unread enquiries are shown in bold.
     </p>
 
-    <form method="GET" action="{{ route('admin.enquiries.index') }}" class="mb-6 grid gap-3 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200 sm:grid-cols-2 lg:grid-cols-[2fr_1.2fr_1fr_1fr_auto_auto] lg:items-end">
-        <x-admin.input name="search" type="search" label="Search" :value="$search" placeholder="Name, email, mobile, product or SKU" />
+    <form method="GET" action="{{ route('admin.enquiries.index') }}" class="mb-6 grid grid-cols-2 gap-3 rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200 lg:grid-cols-[2fr_1.2fr_1fr_1fr_auto_auto] lg:items-end">
+        <div class="col-span-2 lg:col-span-1">
+            <x-admin.input name="search" type="search" label="Search" :value="$search" placeholder="Name, email, mobile, product or SKU" />
+        </div>
 
-        <x-admin.select name="status" label="Status" :options="$statusOptions" :value="request('status')" placeholder="Any status" />
+        <div class="col-span-2 lg:col-span-1">
+            <x-admin.select name="status" label="Status" :options="$statusOptions" :value="request('status')" placeholder="Any status" />
+        </div>
 
         <x-admin.input name="from" type="date" label="Received from" :value="request('from')" />
         <x-admin.input name="to" type="date" label="Received to" :value="request('to')" />
 
-        <label class="flex items-center gap-2 pb-2 text-sm font-semibold text-slate-700">
+        <label class="flex items-center gap-2 text-sm font-semibold text-slate-700 lg:pb-2">
             <input type="checkbox" name="unread" value="1" @checked(request()->boolean('unread')) class="size-4 accent-brand-500">
             Unread only
         </label>
 
-        <div class="flex items-center gap-2">
+        <div class="flex items-center justify-end gap-2 lg:justify-start">
             <x-admin.button>Filter</x-admin.button>
             @if ($isFiltered)
                 <a href="{{ route('admin.enquiries.index') }}" class="rounded-full px-3 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-100">Clear</a>
@@ -43,7 +47,7 @@
     @else
         <div class="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
             <div class="overflow-x-auto">
-                <table class="min-w-full text-sm">
+                <table class="data-table min-w-full text-sm">
                     <thead class="bg-slate-50 text-left text-xs font-bold tracking-wide text-slate-500 uppercase">
                         <tr>
                             <th scope="col" class="px-4 py-3">Received</th>
@@ -54,11 +58,11 @@
                             <th scope="col" class="px-4 py-3"><span class="sr-only">Actions</span></th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-100">
+                    <tbody class="divide-slate-100 md:divide-y">
                         @foreach ($enquiries as $enquiry)
                             @php($unread = $enquiry->isUnread())
                             <tr @class(['bg-brand-50/60' => $unread])>
-                                <td class="px-4 py-3 whitespace-nowrap">
+                                <td class="whitespace-nowrap md:px-4 md:py-3" data-label="Received">
                                     <div class="flex items-center gap-2">
                                         @if ($unread)
                                             <span class="size-2 shrink-0 rounded-full bg-fan-magenta" title="Unread"></span>
@@ -70,21 +74,21 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td class="max-w-64 px-4 py-3">
+                                <td class="md:max-w-64 md:px-4 md:py-3" data-primary>
                                     <a href="{{ route('admin.enquiries.show', $enquiry) }}" @class(['block truncate text-ink hover:text-brand-600', 'font-bold' => $unread, 'font-semibold' => ! $unread])>{{ $enquiry->name }}</a>
                                     <p class="truncate text-xs text-slate-500">{{ collect([$enquiry->company, $enquiry->email])->filter()->join(' · ') }}</p>
                                 </td>
-                                <td class="max-w-64 px-4 py-3">
+                                <td class="md:max-w-64 md:px-4 md:py-3" data-label="Product">
                                     @if ($enquiry->product_name !== null)
-                                        <p class="truncate font-semibold text-ink">{{ $enquiry->product_name }}</p>
+                                        <p class="font-semibold text-ink md:truncate">{{ $enquiry->product_name }}</p>
                                         <p class="text-xs text-slate-500">SKU {{ $enquiry->sku }}</p>
                                     @else
                                         <span class="text-xs font-semibold text-slate-400">General enquiry</span>
                                     @endif
                                 </td>
-                                <td class="px-4 py-3 text-right text-slate-600">{{ $enquiry->quantity !== null ? number_format($enquiry->quantity) : '—' }}</td>
-                                <td class="px-4 py-3"><x-admin.enquiry-status :status="$enquiry->status" /></td>
-                                <td class="px-4 py-3 text-right">
+                                <td class="text-slate-600 md:px-4 md:py-3 md:text-right" data-label="Qty">{{ $enquiry->quantity !== null ? number_format($enquiry->quantity) : '—' }}</td>
+                                <td class="md:px-4 md:py-3" data-label="Status"><x-admin.enquiry-status :status="$enquiry->status" /></td>
+                                <td class="md:px-4 md:py-3 md:text-right" data-actions>
                                     <a href="{{ route('admin.enquiries.show', $enquiry) }}" class="font-semibold text-brand-600 hover:text-brand-800">View<span class="sr-only"> enquiry from {{ $enquiry->name }}</span></a>
                                 </td>
                             </tr>

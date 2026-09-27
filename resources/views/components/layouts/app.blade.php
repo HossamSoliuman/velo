@@ -22,7 +22,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         {{ $head ?? '' }}
     </head>
-    <body class="flex min-h-screen flex-col">
+    <body class="flex min-h-screen flex-col max-lg:has-[[data-sticky-cta]]:pb-18">
         <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:rounded focus:bg-white focus:px-4 focus:py-2 focus:text-brand-700">
             Skip to content
         </a>

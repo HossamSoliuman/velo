@@ -1,20 +1,20 @@
 <x-layouts.admin title="Dashboard">
-    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div class="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         @foreach ([
             ['Unread enquiries', $stats['unreadEnquiries'], number_format($stats['enquiries']).' '.str('enquiry')->plural($stats['enquiries']).' in total', 'border-fan-magenta', route('admin.enquiries.index', $stats['unreadEnquiries'] > 0 ? ['unread' => 1] : [])],
             ['Products', $stats['products'], $stats['activeProducts'].' shown on the website', 'border-fan-cyan', route('admin.products.index')],
             ['Featured products', $stats['featuredProducts'], 'Shown on the home page', 'border-fan-lime', route('admin.products.index', ['featured' => 1])],
             ['Categories', $stats['categories'], $stats['activeCategories'].' active', 'border-fan-purple', route('admin.categories.index')],
         ] as [$label, $count, $detail, $accent, $url])
-            <a href="{{ $url }}" class="rounded-2xl border-t-4 {{ $accent }} bg-white p-5 shadow-sm ring-1 ring-slate-200 transition hover:shadow-md">
-                <p class="text-sm font-semibold text-slate-500">{{ $label }}</p>
-                <p class="mt-2 text-3xl font-extrabold text-brand-800">{{ number_format($count) }}</p>
+            <a href="{{ $url }}" class="rounded-2xl border-t-4 {{ $accent }} bg-white p-4 shadow-sm ring-1 ring-slate-200 transition hover:shadow-md sm:p-5">
+                <p class="text-xs font-semibold text-slate-500 sm:text-sm">{{ $label }}</p>
+                <p class="mt-1 text-2xl font-extrabold text-brand-800 sm:mt-2 sm:text-3xl">{{ number_format($count) }}</p>
                 <p class="mt-1 text-xs text-slate-500">{{ $detail }}</p>
             </a>
         @endforeach
     </div>
 
-    <div class="mt-8 grid gap-6 lg:grid-cols-3">
+    <div class="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3">
         <x-admin.card title="Quick actions" class="lg:col-span-1">
             <div class="grid gap-3">
                 <x-admin.button :href="route('admin.products.create')">Add a product</x-admin.button>

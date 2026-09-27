@@ -76,7 +76,7 @@
 
         <div class="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
             <div class="overflow-x-auto">
-                <table class="min-w-full text-sm">
+                <table class="data-table min-w-full text-sm">
                     <thead class="bg-slate-50 text-left text-xs font-bold tracking-wide text-slate-500 uppercase">
                         <tr>
                             <th scope="col" class="w-24 px-4 py-3">Order</th>
@@ -87,7 +87,7 @@
                             <th scope="col" class="px-4 py-3"><span class="sr-only">Actions</span></th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-100">
+                    <tbody class="divide-slate-100 md:divide-y">
                         @foreach ($category->children as $child)
                             @include('admin.categories.row', ['category' => $child, 'isParent' => false])
                         @endforeach

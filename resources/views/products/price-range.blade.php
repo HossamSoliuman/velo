@@ -13,7 +13,7 @@
 
     @if ($priceRanges)
         <nav aria-label="Price ranges" class="border-b border-brand-100 bg-white">
-            <ul class="mx-auto flex max-w-7xl gap-2 overflow-x-auto px-4 py-4 [scrollbar-width:none] sm:px-6 lg:px-8">
+            <ul class="mx-auto flex max-w-7xl gap-2 overflow-x-auto px-4 py-3 [scrollbar-width:none] sm:px-6 sm:py-4 lg:px-8">
                 <li>
                     <a href="{{ $listingUrl(['min' => null, 'max' => null]) }}" class="{{ $pill(! $isFiltered) }}" @if (! $isFiltered) aria-current="page" @endif>All prices</a>
                 </li>

@@ -9,7 +9,7 @@
         <div class="relative flex-1">
             <svg class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" d="m21 21-4.3-4.3M17 10.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z"/></svg>
             <input id="search" type="search" name="search" value="{{ $search }}" placeholder="Find a category or sub-category by name or slug"
-                class="block w-full rounded-lg border border-slate-300 bg-white py-2 pr-3 pl-9 text-sm text-ink focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:outline-none">
+                class="block w-full rounded-lg border border-slate-300 bg-white py-2 pr-3 pl-9 text-base text-ink focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 focus:outline-none sm:text-sm">
         </div>
         <div class="flex items-center gap-2">
             <x-admin.button variant="secondary">Search</x-admin.button>
@@ -33,7 +33,7 @@
 
         <div class="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-slate-200">
             <div class="overflow-x-auto">
-                <table class="min-w-full text-sm">
+                <table class="data-table min-w-full text-sm">
                     <thead class="bg-slate-50 text-left text-xs font-bold tracking-wide text-slate-500 uppercase">
                         <tr>
                             <th scope="col" class="w-24 px-4 py-3">Order</th>
@@ -45,7 +45,7 @@
                             <th scope="col" class="px-4 py-3"><span class="sr-only">Actions</span></th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-100">
+                    <tbody class="divide-slate-100 md:divide-y">
                         @foreach ($categories as $category)
                             @include('admin.categories.row', ['category' => $category, 'isParent' => true])
                         @endforeach

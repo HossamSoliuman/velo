@@ -13,7 +13,7 @@
         @if ($counter) x-on:input="length = $event.target.value.length" @endif
         @required($required)
         {{ $attributes->class([
-            'block w-full rounded-lg border bg-white px-3 py-2 text-sm text-ink shadow-xs placeholder:text-slate-400 focus:ring-2 focus:ring-brand-500/20 focus:outline-none',
+            'block w-full rounded-lg border bg-white px-3 py-2 text-base text-ink shadow-xs sm:text-sm placeholder:text-slate-400 focus:ring-2 focus:ring-brand-500/20 focus:outline-none',
             'border-red-400 focus:border-red-500' => $errors->has($errorKey),
             'border-slate-300 focus:border-brand-500' => ! $errors->has($errorKey),
         ]) }}>

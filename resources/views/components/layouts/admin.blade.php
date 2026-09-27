@@ -29,8 +29,8 @@
     <body class="bg-slate-50" x-data="{ sidebar: false }">
         {{-- Sidebar --}}
         <div x-show="sidebar" x-cloak x-transition.opacity @click="sidebar = false" class="fixed inset-0 z-30 bg-brand-950/60 lg:hidden"></div>
-        <aside :class="sidebar ? 'translate-x-0' : '-translate-x-full'"
-            class="fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-brand-900 text-white/80 transition-transform lg:translate-x-0">
+        <aside :class="sidebar && 'max-lg:translate-x-0'"
+            class="fixed inset-y-0 left-0 z-40 flex w-64 flex-col bg-brand-900 text-white/80 transition-transform max-lg:-translate-x-full">
             <a href="{{ Route::has('admin.dashboard') ? route('admin.dashboard') : '#' }}" class="flex items-center gap-3 px-6 py-5 text-white">
                 <x-logo class="text-4xl" :tagline="false" />
                 <span class="rounded bg-white/10 px-2 py-0.5 text-[0.65rem] font-bold tracking-widest uppercase">Admin</span>
@@ -64,9 +64,9 @@
                 <button type="button" @click="sidebar = true" class="-ml-1 rounded-md p-2 text-brand-700 hover:bg-brand-50 lg:hidden" aria-label="Open sidebar">
                     <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
                 </button>
-                <h1 class="text-lg font-bold text-brand-800">{{ $title }}</h1>
+                <h1 class="min-w-0 truncate text-lg font-bold text-brand-800">{{ $title }}</h1>
 
-                <div class="ml-auto flex items-center gap-4 text-sm">
+                <div class="ml-auto flex shrink-0 items-center gap-4 text-sm">
                     @auth
                         <a href="{{ Route::has('admin.account.edit') ? route('admin.account.edit') : '#' }}" class="hidden font-semibold text-slate-600 hover:text-brand-700 sm:inline">{{ auth()->user()->name }}</a>
                         @if (Route::has('admin.logout'))
