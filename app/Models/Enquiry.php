@@ -30,6 +30,7 @@ class Enquiry extends Model
             'quantity' => 'integer',
             'status' => EnquiryStatus::class,
             'read_at' => 'datetime',
+            'email_failed_at' => 'datetime',
         ];
     }
 
@@ -76,6 +77,14 @@ class Enquiry extends Model
         if ($this->isUnread()) {
             $this->forceFill(['read_at' => now()])->saveQuietly();
         }
+    }
+
+    /**
+     * Record that the email to the business could not be sent.
+     */
+    public function markEmailFailed(): void
+    {
+        $this->forceFill(['email_failed_at' => now()])->saveQuietly();
     }
 
     #[Scope]

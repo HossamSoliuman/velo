@@ -1,9 +1,12 @@
 <?php
 
+use App\Models\SiteSetting;
 use App\Models\User;
-use Illuminate\Auth\Notifications\ResetPassword;
+use App\Notifications\ResetAdminPassword;
+use Illuminate\Notifications\SendQueuedNotifications;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Queue;
 
 const NEUTRAL_RESET_MESSAGE = 'If an account exists for that email address, we have sent a password reset link to it.';
 
@@ -20,11 +23,37 @@ test('an active admin is emailed a reset link that opens the admin reset page', 
     $this->post(route('admin.password.email'), ['email' => 'owner@velo.test'])
         ->assertSessionHas('status', NEUTRAL_RESET_MESSAGE);
 
-    Notification::assertSentTo($admin, ResetPassword::class, function (ResetPassword $notification) use ($admin) {
-        $url = $notification->toMail($admin)->actionUrl;
+    Notification::assertSentTo($admin, ResetAdminPassword::class, function (ResetAdminPassword $notification) use ($admin) {
+        $url = $notification->toMail($admin)->viewData['url'];
 
         return str_starts_with($url, route('admin.password.reset', $notification->token));
     });
+});
+
+test('the reset email is queued, so the page never waits for the mail server', function () {
+    Queue::fake([SendQueuedNotifications::class]);
+    User::factory()->create(['email' => 'owner@velo.test']);
+
+    $this->post(route('admin.password.email'), ['email' => 'owner@velo.test'])
+        ->assertSessionHas('status', NEUTRAL_RESET_MESSAGE);
+
+    Queue::assertPushed(SendQueuedNotifications::class, fn (SendQueuedNotifications $job) => $job->notification instanceof ResetAdminPassword);
+});
+
+test('the reset email is branded, greets the admin and says when the link expires', function () {
+    config(['mail.from.address' => 'no-reply@velo.example']);
+    SiteSetting::put('site_name', 'Velo Printing & Gifting');
+    $admin = User::factory()->create(['name' => 'Asha Rao', 'email' => 'owner@velo.test']);
+
+    $mail = (new ResetAdminPassword('reset-token'))->toMail($admin);
+
+    expect($mail->subject)->toBe('Reset your Velo Printing & Gifting admin password')
+        ->and($mail->from)->toBe(['no-reply@velo.example', 'Velo Printing & Gifting'])
+        ->and((string) $mail->render())->toContain(
+            'Hi Asha Rao',
+            route('admin.password.reset', ['token' => 'reset-token', 'email' => 'owner@velo.test']),
+            'This link expires in 60 minutes',
+        );
 });
 
 test('the response does not reveal whether an email address has an account', function (string $email) {
@@ -60,7 +89,7 @@ test('an admin can set a new password with the emailed token, and the token work
     $this->post(route('admin.password.email'), ['email' => 'owner@velo.test']);
 
     $token = null;
-    Notification::assertSentTo($admin, ResetPassword::class, function (ResetPassword $notification) use (&$token) {
+    Notification::assertSentTo($admin, ResetAdminPassword::class, function (ResetAdminPassword $notification) use (&$token) {
         $token = $notification->token;
 
         return true;

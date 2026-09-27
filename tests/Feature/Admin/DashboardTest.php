@@ -18,17 +18,28 @@ test('shows enquiry and catalogue totals, latest enquiries and recently updated 
         ->get(route('admin.dashboard'))
         ->assertOk()
         ->assertSee('Executive Gift Set')
-        ->assertSee('Priya Sharma');
+        ->assertSee('Priya Sharma')
+        ->assertDontSee('could not be emailed');
 
     expect($response->viewData('stats'))->toBe([
         'enquiries' => 2,
         'unreadEnquiries' => 1,
+        'unreadUnsentEnquiries' => 0,
         'products' => 4,
         'activeProducts' => 3,
         'featuredProducts' => 1,
         'categories' => 3,
         'activeCategories' => 2,
     ]);
+});
+
+test('warns about unread enquiries whose email could not be sent', function () {
+    Enquiry::factory()->create(['email_failed_at' => now()]);
+    Enquiry::factory()->read()->create(['email_failed_at' => now()]);
+
+    $this->actingAs(User::factory()->create())
+        ->get(route('admin.dashboard'))
+        ->assertSee('1 unread enquiry could not be emailed to you.');
 });
 
 test('highlights only the matching section in the sidebar', function (string $routeName, string $section) {

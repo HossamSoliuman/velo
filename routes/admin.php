@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductOrderController;
 use App\Http\Controllers\Admin\ProductStatusController;
 use App\Http\Controllers\Admin\SettingsController;
+use App\Http\Controllers\Admin\TestEmailController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -61,6 +62,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     Route::get('settings', [SettingsController::class, 'edit'])->name('settings.edit');
     Route::put('settings', [SettingsController::class, 'update'])->name('settings.update');
+    Route::post('settings/test-email', [TestEmailController::class, 'store'])->middleware('throttle:5,1')->name('settings.test-email.store');
 
     Route::get('e-catalog', [ECatalogController::class, 'edit'])->name('e-catalog.edit');
     Route::put('e-catalog', [ECatalogController::class, 'update'])->name('e-catalog.update');

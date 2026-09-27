@@ -62,6 +62,11 @@ return [
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 Mysql::ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
             ]) : [],
+            // Backups: dump without locking tables, and skip tablespaces, which shared hosting users may not read.
+            'dump' => [
+                'useSingleTransaction',
+                'addExtraOption' => '--no-tablespaces',
+            ],
         ],
 
         'mariadb' => [

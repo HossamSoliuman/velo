@@ -1,4 +1,17 @@
 <x-layouts.admin title="Dashboard">
+    @if ($stats['unreadUnsentEnquiries'] > 0)
+        <div class="mb-6 rounded-lg border-l-4 border-red-500 bg-white px-4 py-3 text-sm text-slate-700 shadow-sm" role="alert">
+            <p class="font-semibold text-slate-800">
+                {{ $stats['unreadUnsentEnquiries'] }} unread {{ str('enquiry')->plural($stats['unreadUnsentEnquiries']) }} could not be emailed to you.
+            </p>
+            <p class="mt-1">
+                {{ $stats['unreadUnsentEnquiries'] === 1 ? 'It is' : 'They are' }} saved under
+                <a href="{{ route('admin.enquiries.index', ['unread' => 1]) }}" class="font-semibold text-brand-600 hover:text-brand-800">Enquiries</a>, marked “Email not sent”.
+                Use <a href="{{ route('admin.settings.edit') }}#enquiry-emails" class="font-semibold text-brand-600 hover:text-brand-800">Settings → Send a test email</a> to check the mail setup.
+            </p>
+        </div>
+    @endif
+
     <div class="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
         @foreach ([
             ['Unread enquiries', $stats['unreadEnquiries'], number_format($stats['enquiries']).' '.str('enquiry')->plural($stats['enquiries']).' in total', 'border-fan-magenta', route('admin.enquiries.index', $stats['unreadEnquiries'] > 0 ? ['unread' => 1] : [])],

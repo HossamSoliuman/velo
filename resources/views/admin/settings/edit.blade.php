@@ -58,7 +58,7 @@
             </div>
         </x-admin.card>
 
-        <x-admin.card title="Enquiry emails" description="Every enquiry is saved under Enquiries and also emailed to the business.">
+        <x-admin.card id="enquiry-emails" title="Enquiry emails" description="Every enquiry is saved under Enquiries and also emailed to the business." class="scroll-mt-24">
             <div class="grid gap-6 sm:grid-cols-2">
                 <x-admin.input name="enquiry_email" type="email" label="Send enquiries to" :value="$settings['enquiry_email'] ?? ''" required
                     hint="The address that receives the enquiry emails." />
@@ -71,6 +71,19 @@
                     <p class="text-xs text-slate-500">Set with the SMTP account in the server's mail configuration, so emails pass spam checks.</p>
                 </x-admin.field>
             </div>
+
+            <div class="mt-6 flex flex-col gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:items-center">
+                {{-- Submits the separate form below this one, since forms can't be nested. --}}
+                <x-admin.button variant="secondary" form="test-email-form" class="shrink-0">Send a test email</x-admin.button>
+                <p class="text-xs text-slate-500">Sends a test to the saved “Send enquiries to” address, the same way enquiry emails are sent. Save any changes first.</p>
+            </div>
+            @if (session('test_email'))
+                <p role="status" @class([
+                    'mt-4 rounded-lg px-4 py-3 text-sm break-words',
+                    'bg-emerald-50 text-emerald-800' => session('test_email.sent'),
+                    'bg-red-50 text-red-700' => ! session('test_email.sent'),
+                ])>{{ session('test_email.message') }}</p>
+            @endif
         </x-admin.card>
 
         <x-admin.card title="Social media" description="Leave blank to hide an icon.">
@@ -123,5 +136,9 @@
         </x-admin.card>
 
         @include('admin.partials.form-actions', ['cancelUrl' => route('admin.dashboard'), 'submitLabel' => 'Save settings'])
+    </form>
+
+    <form id="test-email-form" method="POST" action="{{ route('admin.settings.test-email.store') }}" class="hidden">
+        @csrf
     </form>
 </x-layouts.admin>

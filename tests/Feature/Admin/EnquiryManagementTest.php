@@ -175,3 +175,11 @@ test('deletes an enquiry', function () {
 
     expect(Enquiry::query()->count())->toBe(0);
 });
+
+test('marks an enquiry whose email could not be sent', function () {
+    $enquiry = Enquiry::factory()->create(['email_failed_at' => now()]);
+    $admin = User::factory()->create();
+
+    $this->actingAs($admin)->get(route('admin.enquiries.index'))->assertSee('Email not sent');
+    $this->actingAs($admin)->get(route('admin.enquiries.show', $enquiry))->assertSee('The email for this enquiry could not be sent.');
+});

@@ -5,6 +5,7 @@ use App\Models\Enquiry;
 use App\Models\Product;
 use App\Models\SiteSetting;
 use Illuminate\Support\Carbon;
+use Symfony\Component\Mailer\Exception\TransportException;
 
 test('the email contains the customer, product and requirement details with a link to the admin panel', function () {
     $product = Product::factory()->create(['name' => 'Executive Gift Set', 'sku' => 'VPG-GS-001']);
@@ -66,4 +67,12 @@ test('the email is sent from the server mail address under the configured sender
     SiteSetting::put('enquiry_from_name', 'Velo Website');
 
     (new EnquiryReceived($enquiry))->assertFrom('no-reply@velo.example', 'Velo Website');
+});
+
+test('an email that fails every attempt flags the enquiry as not emailed', function () {
+    $enquiry = Enquiry::factory()->create();
+
+    (new EnquiryReceived($enquiry))->failed(new TransportException('Connection refused'));
+
+    expect($enquiry->fresh()->email_failed_at)->not->toBeNull();
 });

@@ -29,6 +29,12 @@
                             Received {{ $enquiry->received_at->format('j M Y, g:i A') }}
                             <span class="text-slate-400">({{ $enquiry->created_at->diffForHumans() }})</span>
                         </p>
+                        @if ($enquiry->email_failed_at)
+                            <p class="mt-2 text-sm font-semibold text-red-600">
+                                The email for this enquiry could not be sent.
+                                <a href="{{ route('admin.settings.edit') }}#enquiry-emails" class="underline hover:text-red-800">Check the mail setup</a>
+                            </p>
+                        @endif
                     </div>
                     <x-admin.enquiry-status :status="$enquiry->status" class="shrink-0 self-start" />
                 </div>

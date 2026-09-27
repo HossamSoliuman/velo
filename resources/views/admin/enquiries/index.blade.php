@@ -87,7 +87,12 @@
                                     @endif
                                 </td>
                                 <td class="text-slate-600 md:px-4 md:py-3 md:text-right" data-label="Qty">{{ $enquiry->quantity !== null ? number_format($enquiry->quantity) : '—' }}</td>
-                                <td class="md:px-4 md:py-3" data-label="Status"><x-admin.enquiry-status :status="$enquiry->status" /></td>
+                                <td class="md:px-4 md:py-3" data-label="Status">
+                                    <x-admin.enquiry-status :status="$enquiry->status" />
+                                    @if ($enquiry->email_failed_at)
+                                        <p class="mt-1 text-xs font-semibold text-red-600">Email not sent</p>
+                                    @endif
+                                </td>
                                 <td class="md:px-4 md:py-3 md:text-right" data-actions>
                                     <a href="{{ route('admin.enquiries.show', $enquiry) }}" class="font-semibold text-brand-600 hover:text-brand-800">View<span class="sr-only"> enquiry from {{ $enquiry->name }}</span></a>
                                 </td>

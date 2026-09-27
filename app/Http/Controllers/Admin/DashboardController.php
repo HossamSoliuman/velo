@@ -30,12 +30,14 @@ class DashboardController extends Controller
             ->toBase()
             ->selectRaw('count(*) as total')
             ->selectRaw('count(case when read_at is null then 1 end) as unread')
+            ->selectRaw('count(case when read_at is null and email_failed_at is not null then 1 end) as unread_unsent')
             ->first();
 
         return view('admin.dashboard', [
             'stats' => [
                 'enquiries' => (int) $enquiryCounts->total,
                 'unreadEnquiries' => (int) $enquiryCounts->unread,
+                'unreadUnsentEnquiries' => (int) $enquiryCounts->unread_unsent,
                 'products' => (int) $productCounts->total,
                 'activeProducts' => (int) $productCounts->active,
                 'featuredProducts' => (int) $productCounts->featured,
