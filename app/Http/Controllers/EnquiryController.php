@@ -21,7 +21,14 @@ class EnquiryController extends Controller
      */
     public function store(StoreEnquiryRequest $request): JsonResponse|RedirectResponse
     {
-        if (! $request->isSpam()) {
+        if ($request->isSpam()) {
+            // Logged so a real customer whose browser or form-filler filled the trap can still be found.
+            Log::warning('Enquiry discarded as spam because the hidden spam-trap field was filled in.', [
+                ...$request->safe()->only(['name', 'email', 'mobile', 'product_id']),
+                'trap_value' => $request->input(StoreEnquiryRequest::HONEYPOT_FIELD),
+                'ip' => $request->ip(),
+            ]);
+        } else {
             $enquiry = new Enquiry($request->safe()->only(['name', 'company', 'email', 'mobile', 'quantity', 'message']));
 
             if ($product = $request->product()) {

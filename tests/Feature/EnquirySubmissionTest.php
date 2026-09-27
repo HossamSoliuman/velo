@@ -6,6 +6,7 @@ use App\Mail\EnquiryReceived;
 use App\Models\Enquiry;
 use App\Models\Product;
 use App\Models\SiteSetting;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 /**
@@ -135,12 +136,19 @@ test('an enquiry cannot be attached to a hidden or unknown product', function (C
     'unknown product' => fn () => fn () => 999,
 ]);
 
-test('submissions that fill in the hidden spam trap look successful but are discarded', function () {
+test('submissions that fill in the hidden spam trap look successful but are discarded and logged', function () {
+    Log::spy();
+
     $this->postJson(route('enquiries.store'), enquiryPayload(['fax' => 'https://spam.example']))
         ->assertCreated();
 
     expect(Enquiry::query()->count())->toBe(0);
     Mail::assertNothingQueued();
+    Log::shouldHaveReceived('warning')->once()->withArgs(
+        fn (string $message, array $context) => str_contains($message, 'spam')
+            && $context['email'] === 'priya@acme.example'
+            && $context['trap_value'] === 'https://spam.example',
+    );
 });
 
 test('an enquiry is still saved when no enquiry email address is set', function () {
